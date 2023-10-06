@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PetProjects:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/PetProjects_jar</output-path>
+    <root id="archive" name="PetProjects.jar">
+      <element id="module-output" name="PetProjects" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jline/jline/3.22.0/jline-3.22.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
