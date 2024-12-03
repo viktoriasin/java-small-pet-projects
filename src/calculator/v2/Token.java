@@ -1,10 +1,10 @@
 package calculator.v2;
 
-class Token {
+interface Token {
 }
 
-class TokenOperator extends Token {
-    Operator value;
+class TokenOperator implements Token {
+    final Operator value;
 
     TokenOperator(Operator value) {
         this.value = value;
@@ -15,14 +15,14 @@ class TokenOperator extends Token {
     }
 }
 
-class TokenNumber extends Token {
-    int value;
+class TokenNumber implements Token {
+    final double value;
 
-    TokenNumber(int value) {
+    TokenNumber(double value) {
         this.value = value;
     }
 
     public String toString() {
-        return String.valueOf(value);
+        return String.format("%.2f", value);
     }
 }
