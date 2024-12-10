@@ -14,16 +14,47 @@ import java.util.stream.Collectors;
 import static java.util.UUID.randomUUID;
 
 public class InMemoryLibrary implements Library {
-    private final List<Book> books = new ArrayList<>();
-    private final List<Author> authors = new ArrayList<>();
+    private final Set<Book> books = new HashSet<>();
+    private final Set<Author> authors = new HashSet<>();
     private final int threshold;
+    private final Map<String, Integer> methodsToInvokes = new HashMap<>();
+
+    private Map<String, Book> bookByIsbn;
+    private Map<String, Set<Book>> bookByTitle;
+    private Set<Book> setOfBookSortedByReleaseDay;
+    private Map<String, Set<Book>> bookByCategory;
+    private Map<Long, Set<Book>> bookByAuthor;
+    private Map<Year, Set<Book>> bookByYear;
+
 
     public InMemoryLibrary(int threshold) {
         this.threshold = threshold;
+        methodsToInvokes.put("findBookByIsbn", 0);
+        methodsToInvokes.put("getBooksByTitleLikeIgnoreCase", 0);
+        methodsToInvokes.put("getBooksByReleaseYear", 0);
+        methodsToInvokes.put("getBooksByAuthorSortedByReleaseDateDesc", 0);
+        methodsToInvokes.put("getAllBooksSortedByReleaseDateDesc", 0);
+        methodsToInvokes.put("findMostExpensiveBookInCategory", 0);
+        methodsToInvokes.put("calculateTotalPriceOfBooksByCategory", 0);
+        methodsToInvokes.put("calculateAveragePagesForAuthor", 0);
+        methodsToInvokes.put("findMostPopulatedCategory", 0);
     }
 
     @Override
     public Optional<Book> findBookByIsbn(String isbn) {
+        if (increaseMethodCallsAndCheckForThreshold("findBookByIsbn")) {
+            if (bookByIsbn == null) {
+                bookByIsbn = new HashMap<>();
+                for (Book book : books) {
+                    bookByIsbn.put(book.isbn(), book);
+                }
+            }
+            if (bookByIsbn.containsKey(isbn)) {
+                return Optional.of(bookByIsbn.get(isbn));
+            } else {
+                return Optional.empty();
+            }
+        }
         return books.stream()
                 .filter(book -> book.isbn().equals(isbn))
                 .findFirst();
@@ -31,6 +62,22 @@ public class InMemoryLibrary implements Library {
 
     @Override
     public Set<Book> getBooksByTitleLikeIgnoreCase(String title) {
+        if (increaseMethodCallsAndCheckForThreshold("getBooksByTitleLikeIgnoreCase")) {
+            String lowerCaseTitle = title.toLowerCase();
+            if (bookByTitle == null) {
+                bookByTitle = new HashMap<>();
+                for (Book book : books) {
+                    for (String wordFromTitle : book.title().toLowerCase().replaceAll("[^a-zA-Z]", "").split("\\s+")) {
+                        bookByTitle.computeIfAbsent(wordFromTitle, k -> new HashSet<>()).add(book);
+                    }
+                }
+            }
+
+            Set<Book> foundBook = bookByTitle.getOrDefault(lowerCaseTitle, Collections.emptySet());
+            if (!foundBook.isEmpty()) {
+                return foundBook;
+            }
+        }
         return books.stream()
                 .filter(book -> book.title().toLowerCase().contains(title.toLowerCase()))
                 .collect(Collectors.toSet());
@@ -47,6 +94,13 @@ public class InMemoryLibrary implements Library {
 
     @Override
     public List<Book> getAllBooksSortedByReleaseDateDesc() {
+        if (increaseMethodCallsAndCheckForThreshold("getAllBooksSortedByReleaseDateDesc")) {
+            if (setOfBookSortedByReleaseDay == null) {
+                setOfBookSortedByReleaseDay = new TreeSet<>(Comparator.comparing(Book::releaseDate, Collections.reverseOrder()));
+                setOfBookSortedByReleaseDay.addAll(books);
+            }
+            return setOfBookSortedByReleaseDay.stream().toList();
+        }
         return books.stream()
                 .sorted((book1, book2) -> book2.releaseDate().compareTo(book1.releaseDate()))
                 .toList();
@@ -54,6 +108,18 @@ public class InMemoryLibrary implements Library {
 
     @Override
     public Optional<Book> findMostExpensiveBookInCategory(String category) {
+        if (increaseMethodCallsAndCheckForThreshold("findMostExpensiveBookInCategory")) {
+            if (bookByCategory == null) {
+                bookByCategory = new HashMap<>();
+                prepareBookByCategory();
+            }
+            if (bookByCategory.containsKey(category)) {
+                Set<Book> booksByCategory = bookByCategory.get(category);
+                return booksByCategory.stream().max(Comparator.comparing(Book::price));
+            } else {
+                return Optional.empty();
+            }
+        }
         return books.stream()
                 .filter(book -> book.categories().stream().anyMatch(thisCategory -> thisCategory.equals(category)))
                 .max(Comparator.comparing(Book::price));
@@ -84,6 +150,22 @@ public class InMemoryLibrary implements Library {
 
     @Override
     public OptionalDouble calculateAveragePagesForAuthor(long authorId) {
+        if (increaseMethodCallsAndCheckForThreshold("calculateAveragePagesForAuthor")) {
+            if (bookByAuthor == null) {
+                bookByAuthor = new HashMap<>();
+                for (Book book : books) {
+                    for (Author author_ : book.authors()) {
+                        bookByAuthor.computeIfAbsent(author_.id(), k -> new HashSet<>()).add(book);
+                    }
+                }
+            }
+            if (bookByAuthor.containsKey(authorId)) {
+                return bookByAuthor.get(authorId).stream().mapToDouble(Book::pages)
+                        .average();
+            } else {
+                return OptionalDouble.empty();
+            }
+        }
         return books.stream()
                 .filter(book -> book.authors().stream().map(Author::id).anyMatch(id -> id == authorId))
                 .mapToDouble(Book::pages)
@@ -92,6 +174,19 @@ public class InMemoryLibrary implements Library {
 
     @Override
     public Map<String, BigDecimal> calculateTotalPriceOfBooksByCategory() {
+        if (increaseMethodCallsAndCheckForThreshold("calculateTotalPriceOfBooksByCategory")) {
+            if (bookByCategory == null) {
+                bookByCategory = new HashMap<>();
+                prepareBookByCategory();
+            }
+            return bookByCategory.entrySet().stream().collect(
+                    Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream()
+                            .map(Book::price)
+                            .reduce(BigDecimal::add)
+                            .orElse(new BigDecimal(0))
+                    ));
+        }
+
         return books.stream()
                 .map(book -> Pair.of(book.categories(), book.price()))
                 .flatMap(pair -> pair.first().stream().map(category -> Pair.of(category, pair.second())))
@@ -100,6 +195,16 @@ public class InMemoryLibrary implements Library {
 
     @Override
     public List<Book> getBooksByReleaseYear(Year releaseYear) {
+        if (increaseMethodCallsAndCheckForThreshold("getBooksByReleaseYear")) {
+            if (bookByYear == null) {
+                bookByYear = new HashMap<>();
+                for (Book book : books) {
+                    Year year = Year.of(book.releaseDate().getYear());
+                    bookByYear.computeIfAbsent(year, k -> new HashSet<>()).add(book);
+                }
+            }
+            return bookByYear.getOrDefault(releaseYear, Collections.emptySet()).stream().toList();
+        }
         return books.stream()
                 .filter(book -> book.releaseDate().getYear() == releaseYear.getValue())
                 .toList();
@@ -107,6 +212,15 @@ public class InMemoryLibrary implements Library {
 
     @Override
     public Optional<String> findMostPopulatedCategory() {
+        if (increaseMethodCallsAndCheckForThreshold("findMostPopulatedCategory")) {
+            if (bookByCategory == null) {
+                bookByCategory = new HashMap<>();
+                prepareBookByCategory();
+            }
+            return bookByCategory.entrySet().stream()
+                    .max(Comparator.comparingInt(entry -> entry.getValue().size()))
+                    .map(Map.Entry::getKey);
+        }
         return books.stream()
                 .flatMap(book -> book.categories().stream())
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
@@ -133,7 +247,10 @@ public class InMemoryLibrary implements Library {
         if (books.stream().anyMatch(book -> book.isbn().equals(isbn))) {
             throw new IllegalArgumentException("The book with this isbn has already exists in library.");
         }
+
         books.add(newBook);
+        updateHelperStructures(newBook);
+
         return newBook;
     }
 
@@ -156,7 +273,10 @@ public class InMemoryLibrary implements Library {
     @Override
     public Optional<Book> deleteBook(String isbn) {
         Optional<Book> foundBook = books.stream().filter(book -> book.isbn().equals(isbn)).findFirst();
-        foundBook.ifPresent(x -> books.remove(foundBook.get()));
+        if (foundBook.isPresent()) {
+            deleteFromHelperStructures(foundBook.get());
+            books.remove(foundBook.get());
+        }
         return foundBook;
     }
 
@@ -170,5 +290,77 @@ public class InMemoryLibrary implements Library {
         }
         foundAuthor.ifPresent(x -> authors.remove(foundAuthor.get()));
         return foundAuthor;
+    }
+
+    private boolean increaseMethodCallsAndCheckForThreshold(String methodName) {
+        if (methodsToInvokes.get(methodName) > threshold) {
+            return true;
+        } else {
+            methodsToInvokes.put(methodName, methodsToInvokes.get(methodName) + 1);
+            return false;
+        }
+    }
+
+    private void updateHelperStructures(Book newBook) {
+        if (bookByIsbn != null) {
+            bookByIsbn.put(newBook.isbn(), newBook);
+        }
+        if (bookByTitle != null) {
+            for (String word : newBook.title().toLowerCase().replaceAll("[^a-zA-Z]", "").split("\\s+")) {
+                bookByTitle.computeIfAbsent(word, k -> new HashSet<>()).add(newBook);
+            }
+        }
+        if (setOfBookSortedByReleaseDay != null) {
+            setOfBookSortedByReleaseDay.add(newBook);
+        }
+        if (bookByCategory != null) {
+            for (String category : newBook.categories()) {
+                bookByCategory.computeIfAbsent(category, k -> new HashSet<>()).add(newBook);
+            }
+        }
+        if (bookByAuthor != null) {
+            for (Author author : newBook.authors()) {
+                bookByAuthor.computeIfAbsent(author.id(), k -> new HashSet<>()).add(newBook);
+            }
+        }
+        if (bookByYear != null) {
+            bookByYear.computeIfAbsent(Year.of(newBook.releaseDate().getYear()), k -> new HashSet<>()).add(newBook);
+        }
+    }
+
+    private void deleteFromHelperStructures(Book bookToDelete) {
+        if (bookByIsbn != null) {
+            bookByIsbn.remove(bookToDelete.isbn());
+        }
+        if (bookByTitle != null) {
+            bookByTitle.remove(bookToDelete.title());
+            for (String wordFromTitle : bookToDelete.title().toLowerCase().replaceAll("[^a-zA-Z]", "").split("\\s+")) {
+                bookByTitle.computeIfAbsent(wordFromTitle, k -> new HashSet<>()).remove(bookToDelete);
+            }
+        }
+        if (setOfBookSortedByReleaseDay != null) {
+            setOfBookSortedByReleaseDay.remove(bookToDelete);
+        }
+        if (bookByCategory != null) {
+            for (String category : bookToDelete.categories()) {
+                bookByCategory.computeIfAbsent(category, k -> Collections.emptySet()).remove(bookToDelete);
+            }
+        }
+        if (bookByAuthor != null) {
+            for (Author author : bookToDelete.authors()) {
+                bookByAuthor.computeIfAbsent(author.id(), k -> Collections.emptySet()).remove(bookToDelete);
+            }
+        }
+        if (bookByYear != null) {
+            bookByYear.computeIfAbsent(Year.of(bookToDelete.releaseDate().getYear()), k -> Collections.emptySet()).remove(bookToDelete);
+        }
+    }
+
+    private void prepareBookByCategory() {
+        for (Book book : books) {
+            for (String category_ : book.categories()) {
+                bookByCategory.computeIfAbsent(category_, k -> new HashSet<>()).add(book);
+            }
+        }
     }
 }
