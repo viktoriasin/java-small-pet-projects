@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.*;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -71,14 +70,14 @@ public class InMemoryLibrary implements Library {
     public Set<Author> findAuthorsWithBooksInMultipleCategories(int categoryCountThreshold) {
         return books.stream()
                 .map(book -> Pair.of(book.authors(), book.categories()))
-                .flatMap(pair -> pair.first().stream().map(author -> Pair.of(author, pair.second())))
-                .collect(Collectors.toMap(Pair::first, Pair::second, (a, b) -> {
+                .flatMap(pair -> pair.first().stream().map(author -> Pair.of(author, new HashSet<>(pair.second()))))
+                .collect(Collectors.toMap(Pair::first, Pair::second, (Set<String> a, Set<String> b) -> {
                     a.addAll(b);
                     return a;
                 }))
                 .entrySet()
                 .stream()
-                .filter(entry -> entry.getValue().size() >= categoryCountThreshold)
+                .filter(entry -> entry.getValue().size() > categoryCountThreshold)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
     }
@@ -96,7 +95,7 @@ public class InMemoryLibrary implements Library {
         return books.stream()
                 .map(book -> Pair.of(book.categories(), book.price()))
                 .flatMap(pair -> pair.first().stream().map(category -> Pair.of(category, pair.second())))
-                .collect(Collectors.toMap(Pair::first, Pair::second, BinaryOperator.maxBy(BigDecimal::compareTo)));
+                .collect(Collectors.toMap(Pair::first, Pair::second, BigDecimal::add));
     }
 
     @Override
@@ -118,7 +117,15 @@ public class InMemoryLibrary implements Library {
 
     @Override
     public Book addBook(String isbn, String title, LocalDate releaseDate, Set<String> categoryNames, List<Long> authorIds, int pages, BigDecimal price) throws IllegalArgumentException {
-        List<Author> authorsNew = authorIds.stream().map(aLong -> authors.stream().filter(author -> author.id() == aLong).findFirst().orElseGet(() -> new Author(aLong, null, null, null))).toList();
+        if (isbn.isEmpty() || title.isEmpty() || releaseDate == null || price == null || categoryNames.isEmpty() || authorIds.isEmpty()) {
+            throw new IllegalArgumentException("Book attributes is invalid.");
+        }
+        List<Author> authorsNew = authorIds.stream()
+                .map(aLong -> authors.stream()
+                        .filter(author -> author.id() == aLong)
+                        .findFirst()
+                        .orElseGet(() -> new Author(aLong, null, null, null)))
+                .toList();
         Book newBook = new Book(isbn, title, releaseDate, authorsNew, categoryNames, pages, price);
         if (books.contains(newBook)) {
             return null;
@@ -132,10 +139,16 @@ public class InMemoryLibrary implements Library {
 
     @Override
     public Author addAuthor(String firstName, String lastName, LocalDate birthDate) {
-        Author newAuthor = new Author(randomUUID().getMostSignificantBits() & Long.MAX_VALUE, firstName, lastName, birthDate);
-        if (authors.contains(newAuthor)) {
-            return null;
+        Optional<Author> authorOptional = authors.stream()
+                .filter(author -> author.firstName().equals(firstName)
+                        && author.lastName().equals(lastName)
+                        && author.birthDate().equals(birthDate))
+                .findAny();
+        if (authorOptional.isPresent()) {
+            return authorOptional.get();
         }
+        Author newAuthor = new Author(randomUUID().getMostSignificantBits() & Long.MAX_VALUE, firstName, lastName, birthDate);
+
         authors.add(newAuthor);
         return newAuthor;
     }
