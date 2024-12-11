@@ -34,7 +34,7 @@ public class SkipListSet<T> extends AbstractSet<T> implements NavigableSet<T> {
 
     @Override
     public T lower(T t) {
-        Node<T> prev = lowerNode(t, baseLevelHead);
+        Node<T> prev = previousNode(t, baseLevelHead);
         if (prev == null) {
             return null;
         }
@@ -89,20 +89,6 @@ public class SkipListSet<T> extends AbstractSet<T> implements NavigableSet<T> {
         return currNode.value;
     }
 
-    public Node<T> higherNode(T t, HeadNodeOfLevel<T> currLevelHead) {
-        Node<T> currNode = currLevelHead.next;
-
-        while (currNode != null && smartCompare(currNode.value, t) <= 0) {
-            currNode = currNode.next;
-        }
-
-        if (currNode == null) {
-            return null;
-        }
-
-        return currNode;
-    }
-
     @Override
     public T pollFirst() {
         if (isEmpty()) {
@@ -151,100 +137,37 @@ public class SkipListSet<T> extends AbstractSet<T> implements NavigableSet<T> {
 
     @Override
     public Iterator<T> descendingIterator() {
-        Node<T> startOfReverseList = createReverseLinkedList(baseLevelHead.next);
         return new Iterator<T>() {
-            Node<T> currentNode = new Node(null, null, startOfReverseList);
-            final Node<T> head = currentNode;
-            Node<T> prev;
+            Node<T> lastNode = lastNode();
+            Node<T> currentNode = lastNode;
+            Node<T> next = previousNode(lastNode == null ? null : lastNode.value, baseLevelHead);
+            Node<T> prev = null;
 
             @Override
             public boolean hasNext() {
-                return currentNode.next != null;
+                return currentNode != null;
             }
 
             @Override
             public T next() {
-                T valueToReturn = currentNode.next.value;
+                T valueToReturn = currentNode.value;
                 prev = currentNode;
-                currentNode = currentNode.next;
+                currentNode = next;
+
+                next = currentNode == null ? null : previousNode(currentNode.value, baseLevelHead);
                 return valueToReturn;
             }
 
             @Override
             public void remove() {
-                if (prev == null) {
-                    head.next = currentNode.next;
-                } else {
-                    prev.next = currentNode.next;
-                }
+                findNodeAndDoAction(currentNode.value, true);
             }
         };
     }
 
     @Override
-    public NavigableSet<T> descendingSet() {
-        return null;
-    }
-
-    @Override
-    public NavigableSet<T> subSet(T fromElement, boolean fromInclusive, T toElement, boolean toInclusive) {
-        Node<T> start = findNode(fromElement);
-        if (fromElement == null || toElement == null) {
-            throw new NullPointerException("fromElement and toElement must not be null.");
-        }
-        if (smartCompare(fromElement, toElement) > 0) {
-            throw new IllegalArgumentException("fromElement must be lower than toElement");
-        }
-        if (!fromInclusive) {
-            if (start != null) {
-                start = start.next;
-            }
-        }
-        int resultTo = toInclusive ? 1 : 0;
-        SkipListSet<T> newSkipList = new SkipListSet<>(this.comparator);
-        while (start != null && smartCompare(start.value, toElement) < resultTo) {
-            newSkipList.add(start.value);
-            start = start.next;
-        }
-        return newSkipList;
-    }
-
-    private Node<T> findNode(T fromElement) {
-        Node<T> targetNode = baseLevelHead.next;
-        while (targetNode != null && smartCompare(targetNode.value, fromElement) != 0) {
-            targetNode = targetNode.next;
-        }
-        return targetNode;
-    }
-
-    @Override
-    public NavigableSet<T> headSet(T toElement, boolean inclusive) {
-        return subSet(baseLevelHead.next.value, true, toElement, inclusive);
-    }
-
-    @Override
-    public NavigableSet<T> tailSet(T fromElement, boolean inclusive) {
-        return subSet(fromElement, inclusive, last(), true);
-    }
-
-    @Override
     public Comparator<? super T> comparator() {
         return comparator;
-    }
-
-    @Override
-    public SortedSet<T> subSet(T fromElement, T toElement) {
-        return subSet(fromElement, true, toElement, false);
-    }
-
-    @Override
-    public SortedSet<T> headSet(T toElement) {
-        return headSet(toElement, true);
-    }
-
-    @Override
-    public SortedSet<T> tailSet(T fromElement) {
-        return tailSet(fromElement, true);
     }
 
     @Override
@@ -324,6 +247,86 @@ public class SkipListSet<T> extends AbstractSet<T> implements NavigableSet<T> {
             loopHead = (HeadNodeOfLevel<T>) loopHead.lower;
         } while (loopHead != null);
         return stringBuilder.toString();
+    }
+
+    @Override
+    public NavigableSet<T> descendingSet() {
+        return null;
+    }
+
+    @Override
+    public NavigableSet<T> subSet(T fromElement, boolean fromInclusive, T toElement, boolean toInclusive) {
+        return null;
+//        Node<T> start = findNode(fromElement);
+//        if (fromElement == null || toElement == null) {
+//            throw new NullPointerException("fromElement and toElement must not be null.");
+//        }
+//
+//        if (!fromInclusive) {
+//            if (start != null) {
+//                start = start.next;
+//            }
+//        }
+//        int resultTo = toInclusive ? 1 : 0;
+//        SkipListSet<T> newSkipList = new SkipListSet<>(this.comparator);
+//        while (start != null && smartCompare(start.value, toElement) < resultTo) {
+//            newSkipList.add(start.value);
+//            start = start.next;
+//        }
+//        return newSkipList;
+    }
+
+
+    @Override
+    public NavigableSet<T> headSet(T toElement, boolean inclusive) {
+        return subSet(baseLevelHead.next.value, true, toElement, inclusive);
+    }
+
+    @Override
+    public NavigableSet<T> tailSet(T fromElement, boolean inclusive) {
+        return subSet(fromElement, inclusive, last(), true);
+    }
+
+    @Override
+    public SortedSet<T> subSet(T fromElement, T toElement) {
+        return subSet(fromElement, true, toElement, false);
+    }
+
+    @Override
+    public SortedSet<T> headSet(T toElement) {
+        return headSet(toElement, true);
+    }
+
+    @Override
+    public SortedSet<T> tailSet(T fromElement) {
+        return tailSet(fromElement, true);
+    }
+
+    private Node<T> lastNode() {
+        if (isEmpty()) {
+            return null;
+        }
+        Node<T> current = baseLevelHead.next;
+        Node<T> last = baseLevelHead.next.next;
+        while (last != null) {
+            current = last;
+            last = current.next;
+        }
+        return current;
+    }
+
+    private Node<T> higherNode(T t, HeadNodeOfLevel<T> currLevelHead) {
+        Node<T> currNode = currLevelHead.next;
+
+        while (currNode != null && smartCompare(currNode.value, t) <= 0) {
+            currNode = currNode.next;
+        }
+
+        if (currNode == null) {
+            return null;
+        }
+
+        return currNode;
     }
 
     private boolean addValue(T t, HeadNodeOfLevel<T> currentLevelHead, Node<T> nodeFromLowerLevelToLinkWith) {
@@ -472,16 +475,11 @@ public class SkipListSet<T> extends AbstractSet<T> implements NavigableSet<T> {
     }
 
     private void deleteOnLevel(T t, HeadNodeOfLevel<T> currLevelHead) {
-        Node<T> before = lowerNode(t, currLevelHead);
-        Node<T> upper = higherNode(t, currLevelHead);
-        if (before == null) {
-            currLevelHead.next = upper;
-        } else {
-            before.next = upper;
-        }
+        Node<T> before = previousNode(t, currLevelHead);
+        Objects.requireNonNullElse(before, currLevelHead).next = higherNode(t, currLevelHead);
     }
 
-    private Node<T> lowerNode(T t, Node<T> currLevelHead) {
+    private Node<T> previousNode(T t, Node<T> currLevelHead) {
         Node<T> currNode = currLevelHead.next;
         Node<T> prev = null;
         while (currNode != null && smartCompare(currNode.value, t) < 0) {
@@ -492,9 +490,6 @@ public class SkipListSet<T> extends AbstractSet<T> implements NavigableSet<T> {
     }
 
     private Node<T> searchNodeOnLevel(T valueToFind, Node<T> nodeToStartSearchWith) {
-        // Возвращает либо ноду, по которой надо спуститься вниз
-        // Либо null, если нода, с которой мы начинаем == null
-        // Либо null если первая же нода в поиске больше искомого и на более низком уровне нам надо начинать поиск с самой первой ноды
         if (nodeToStartSearchWith == null) {
             return null; // если достигли конца списка (спускаться вниз больше нельзя)
         }
@@ -534,46 +529,18 @@ public class SkipListSet<T> extends AbstractSet<T> implements NavigableSet<T> {
     }
 
     private String levelToString(Node<T> loopHead) {
-        String result = "NULL --> ";
+        StringBuilder result = new StringBuilder("NULL --> ");
         if (loopHead == null) {
             return result + "NUll";
         }
         while (loopHead != null) {
-            result += loopHead.value + " --> ";
+            result.append(loopHead.value).append(" --> ");
             loopHead = loopHead.next;
         }
         return result + "NUll";
     }
 
-    private Node<T> createReverseLinkedList(Node<T> head) {
-        if (head == null) {
-            return null;
-        }
-
-        if (head.next == null) {
-            return new Node<T>(head.value, null);
-        }
-
-        Node<T> next = head.next;
-
-        Node<T> newHead = new Node<T>(head.value, null);
-        Node<T> newPrev = null;
-
-        while (head != null) {
-
-            newHead.next = newPrev;
-            head = next;
-            newPrev = newHead;
-            if (next != null) {
-                newHead = new Node<T>(head.value, null);
-                next = next.next;
-            }
-        }
-
-        return newPrev;
-    }
-
-    private class Node<T> {
+    private static class Node<T> {
         final T value;
         final Node<T> lower;
         Node<T> next;
@@ -591,14 +558,11 @@ public class SkipListSet<T> extends AbstractSet<T> implements NavigableSet<T> {
 
         @Override
         public String toString() {
-            return "Node{" +
-                    "value=" + value +
-                    ", next=" + next +
-                    '}';
+            return "Node{" + "value=" + value + ", next=" + next + '}';
         }
     }
 
-    private class HeadNodeOfLevel<T> extends Node<T> {
+    private static class HeadNodeOfLevel<T> extends Node<T> {
         public static int totalLevelNumber = 1;
         public final int levelNumber = totalLevelNumber++;
 
