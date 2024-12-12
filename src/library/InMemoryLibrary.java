@@ -17,7 +17,7 @@ public class InMemoryLibrary implements Library {
     private final Set<Book> books = new HashSet<>();
     private final Set<Author> authors = new HashSet<>();
     private final int threshold;
-    private final Map<String, Integer> methodsToInvokes = new HashMap<>();
+    private final Map<String, Integer> methodsToCallsCount = new HashMap<>();
 
     private Map<String, Book> bookByIsbn;
     private Map<String, Set<Book>> bookByTitle;
@@ -29,15 +29,14 @@ public class InMemoryLibrary implements Library {
 
     public InMemoryLibrary(int threshold) {
         this.threshold = threshold;
-        methodsToInvokes.put("findBookByIsbn", 0);
-        methodsToInvokes.put("getBooksByTitleLikeIgnoreCase", 0);
-        methodsToInvokes.put("getBooksByReleaseYear", 0);
-        methodsToInvokes.put("getBooksByAuthorSortedByReleaseDateDesc", 0);
-        methodsToInvokes.put("getAllBooksSortedByReleaseDateDesc", 0);
-        methodsToInvokes.put("findMostExpensiveBookInCategory", 0);
-        methodsToInvokes.put("calculateTotalPriceOfBooksByCategory", 0);
-        methodsToInvokes.put("calculateAveragePagesForAuthor", 0);
-        methodsToInvokes.put("findMostPopulatedCategory", 0);
+        methodsToCallsCount.put("findBookByIsbn", 0);
+        methodsToCallsCount.put("getBooksByTitleLikeIgnoreCase", 0);
+        methodsToCallsCount.put("getBooksByReleaseYear", 0);
+        methodsToCallsCount.put("getAllBooksSortedByReleaseDateDesc", 0);
+        methodsToCallsCount.put("findMostExpensiveBookInCategory", 0);
+        methodsToCallsCount.put("calculateTotalPriceOfBooksByCategory", 0);
+        methodsToCallsCount.put("calculateAveragePagesForAuthor", 0);
+        methodsToCallsCount.put("findMostPopulatedCategory", 0);
     }
 
     @Override
@@ -238,7 +237,8 @@ public class InMemoryLibrary implements Library {
                 .map(aLong -> authors.stream()
                         .filter(author -> author.id() == aLong)
                         .findFirst()
-                        .orElseGet(() -> new Author(aLong, null, null, null)))
+                        .orElseThrow(IllegalArgumentException::new)
+                )
                 .toList();
         Book newBook = new Book(isbn, title, releaseDate, authorsNew, categoryNames, pages, price);
         if (books.contains(newBook)) {
@@ -293,10 +293,10 @@ public class InMemoryLibrary implements Library {
     }
 
     private boolean increaseMethodCallsAndCheckForThreshold(String methodName) {
-        if (methodsToInvokes.get(methodName) > threshold) {
+        if (methodsToCallsCount.get(methodName) > threshold) {
             return true;
         } else {
-            methodsToInvokes.put(methodName, methodsToInvokes.get(methodName) + 1);
+            methodsToCallsCount.put(methodName, methodsToCallsCount.get(methodName) + 1);
             return false;
         }
     }
