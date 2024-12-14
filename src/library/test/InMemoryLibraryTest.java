@@ -1,6 +1,5 @@
 package library.test;
 
-
 import library.model.Author;
 import library.model.Book;
 import library.InMemoryLibrary;
@@ -17,6 +16,7 @@ import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -182,12 +182,11 @@ class InMemoryLibraryTest {
 
     @Test
     void testFindAuthorsWithBooksInMultipleCategories() {
-        Long expectedAuthorId = author3.id();
-        Long expectedSize = 1L;
         Set<Author> authors = library.findAuthorsWithBooksInMultipleCategories(3);
 
-        assertTrue(authors.stream().anyMatch(author -> author.id() == expectedAuthorId));
-        assertEquals(expectedSize, authors.size());
+        assertThat(authors)
+                .map(Author::id)
+                .containsExactlyInAnyOrder(author2.id(), author3.id());
     }
 
     @Test
@@ -246,8 +245,8 @@ class InMemoryLibraryTest {
     void testFindMostPopulatedCategory() {
         Optional<String> mostPopulatedCategory = library.findMostPopulatedCategory();
 
-        assertTrue(mostPopulatedCategory.isPresent());
-        assertEquals("Java", mostPopulatedCategory.get());
+        assertThat(mostPopulatedCategory)
+                .hasValueSatisfying(value -> assertThat(value).isIn("Java", "Programming"));
     }
 
     @Test

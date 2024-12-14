@@ -143,7 +143,7 @@ public class InMemoryLibrary implements Library {
                 }))
                 .entrySet()
                 .stream()
-                .filter(entry -> entry.getValue().size() > categoryCountThreshold)
+                .filter(entry -> entry.getValue().size() >= categoryCountThreshold)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
     }
