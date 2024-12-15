@@ -3,9 +3,9 @@ package json_parser.internal;
 import json_parser.exceptions.JsonParserException;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
-import static json_parser.internal.JsonElementCategory.NOT_VALID;
-import static json_parser.internal.JsonElementCategory.VALID_OTHER;
+import static json_parser.internal.JsonElementCategory.*;
 
 public class JsonStringParser {
     CurrentParserCondition currentParserCondition;
@@ -63,12 +63,17 @@ public class JsonStringParser {
         StringBuilder result = new StringBuilder();
 
         for (int i = currentParserIndex; i < sourceJsonElements.length; i++) {
+
             char ch = sourceJsonElements[i];
-            boolean isValid = characterValidator.categorize(ch, i);
-            if (isValid) {
-                result.append(ch);
-            } else {
-                throw new JsonParserException("Json not valid");
+
+            JsonElementCategory category = characterValidator.categorize(ch);
+
+            switch (category) {
+                case NOT_VALID ->  throw new JsonParserException("Json not valid");
+                case VALID_FOR_KEY, VALID_FOR_VALUE -> result.append(ch);
+                case END_OF_KEY, END_OF_VALUE -> {
+                    return result.toString();
+                }
             }
         }
 
@@ -80,10 +85,16 @@ public class JsonStringParser {
 
         boolean receiveOpenDoubleQuote;
         boolean receiveDotes;
+        boolean recieveDoteForNumber;
 
-        CurrentParserCondition(boolean receiveOpenDoubleQuote, boolean receiveDotes) {
+        CurrentParserCondition(boolean receiveOpenDoubleQuote, boolean receiveDotes, boolean recieveDoteForNumber) {
             this.receiveOpenDoubleQuote = receiveOpenDoubleQuote;
             this.receiveDotes = receiveDotes;
+            this.recieveDoteForNumber = recieveDoteForNumber;
+        }
+
+        public boolean isRecieveDoteForNumber() {
+            return recieveDoteForNumber;
         }
 
         public boolean isReceiveOpenDoubleQuote() {
@@ -106,15 +117,60 @@ public class JsonStringParser {
 
     class ValueValidator implements JsonCategorizer {
         @Override
-        public boolean categorize(char ch) {
+        public JsonElementCategory categorize(char ch) {
+            CurrentParserCondition currentParserCondition = new CurrentParserCondition(false, false, false); //TODO where to move?
+            if (currentParserCondition.isReceiveDotes() && currentParserCondition.isReceiveOpenDoubleQuote()) {
+                if (ch == '\"') {
+                    if (currentParserIndex - 1 >= 0  && sourceJsonElements[currentParserIndex-1] == '\\') {
+                        return VALID_FOR_VALUE;
+                    } else {
+                        return END_OF_VALUE;
+                    }
+                }
+                return VALID_FOR_VALUE;
+            }
+            if (currentParserCondition.isReceiveDotes()) {
+                if (ch == '\"') {
+                    currentParserCondition.receiveOpenDoubleQuote = true;
+                    return VALID_OTHER;
+                }
+
+                if (Character.isSpaceChar(ch)) {
+                    return VALID_OTHER;
+                }
+
+                if (Character.isLetter(ch)) {
+                    return NOT_VALID;
+                }
+
+                if (ch == '.') {
+                    if (!currentParserCondition.isRecieveDoteForNumber()) {
+                        currentParserCondition.recieveDoteForNumber = true;
+                        return VALID_OTHER;
+                    } else {
+                        return NOT_VALID;
+                    }
+                }
+
+                if (isPunctuation(ch)) {
+                    return NOT_VALID;
+                }
+
+                if (Character.isDigit(ch)) {
+                    return VALID_FOR_VALUE;
+                }
+            }
+
             if (ch == ':' && !currentParserCondition.isReceiveDotes()) {
                 currentParserCondition.receiveDotes = true;
+                return VALID_OTHER;
             } else if (currentParserCondition.isReceiveDotes()) {
                 if (ch == ' ' && currentParserCondition.isReceiveOpenDoubleQuote()) {
-                    return true;
+                    return VALID_OTHER;
                 }
                 if (ch == '\"' && !currentParserCondition.isReceiveOpenDoubleQuote()) {
                     currentParserCondition.receiveOpenDoubleQuote = true;
+                    return VALID_OTHER;
                 }
                 boolean b = Character.isLetter(ch) || Character.isSpaceChar(ch);
                 if (b && !currentParserCondition.isReceiveOpenDoubleQuote()) {
@@ -141,13 +197,22 @@ public class JsonStringParser {
             if (ch == '\"' && !currentParserCondition.isReceiveOpenDoubleQuote()) {
                 currentParserCondition.receiveOpenDoubleQuote = true;
                 return VALID_OTHER;
-            } else if (ch == '\"') {
-                if (currentParserIndex-1 >= 0 && sourceJsonElements[currentParserIndex-1] != '\\') {
-                    return NOT_VALID;
+            } else if (ch == '\"' && currentParserCondition.isReceiveOpenDoubleQuote()) {
+                if (currentParserIndex - 1 >= 0 && sourceJsonElements[currentParserIndex - 1] != '\\') {
+                    return END_OF_KEY;
+                } else {
+                    if (currentParserIndex + 1 == sourceJsonElements.length) {
+                        return NOT_VALID; // когда у нас невальдгый джсон с незакрытым ключом, например {"key}
+                    }
+                    return VALID_OTHER;
                 }
             }
-            return NOT_VALID;
+            return VALID_FOR_KEY;
         }
     }
 
+
+    private boolean isPunctuation(char ch) {
+        return ch == '!' || ch == '\"' || ch == '#' || ch == '$' || ch == '%' || ch == '&' || ch == '\'' || ch == '(' || ch == ')' || ch == '*' || ch == '+' || ch == ',' || ch == '-' || ch == '.' || ch == '/' || ch == ':' || ch == ';' || ch == '<' || ch == '=' || ch == '>' || ch == '?' || ch == '@' || ch == '[' || ch == '\\' || ch == ']' || ch == '^' || ch == '`' || ch == '{' || ch == '|' || ch == '}';
+    }
 }
