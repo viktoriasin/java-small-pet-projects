@@ -10,9 +10,6 @@ public class JsonParserUtil {
 
     public JsonParserUtil(String jsonString) {
         this.jsonChars = jsonString.toCharArray();
-        Map<String, Object> keyValueMap = parseObject();
-        System.out.println(keyValueMap);
-        System.out.println(Arrays.toString((Object[]) keyValueMap.get("array")));
     }
 
     public Map<String, Object> parseObject() {
