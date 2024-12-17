@@ -5,15 +5,18 @@ import json_parser.internal.JsonObjectImpl;
 import java.lang.reflect.InvocationTargetException;
 
 public class Main {
-    public static void main(String[] args) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public static void main(String[] args) throws Exception {
 //        new JsonObjectImpl("{ \"first_name\": \"John\", \"last_name\": \"Smith\", \"is_alive\": true, \"age\": 27}");
 //        new JsonObjectImpl("{ \"first_name\": \"John\", \"last_name\": \"Smith\", \"is_alive\": true, \"age\": 27, \"array\" : [1, 2,  3], \"number\": 27.3, \"object\" : { \"first_name\": \"John\", \"last_name\": \"Smith\"}}");
 //        new JsonObjectImpl("{ \"first_name\": \"John\", \"last_name\": \"Smith\", \"is_alive\": true, \"age\": 27, \"array\" : [{ \"first_name\": \"x\", \"last_name\": \"y\"}, { \"first_name\": \"234!\", \"last_name\": \"'?sdsd\"}], \"number\": 27.3, \"object\" : { \"first_name\": \"John\", \"last_name\": \"Smith\"}}");
 //        new JsonObjectImpl("{ \"first_name\": \"John\", \"last_name\": \"Smith\", \"is_alive\": true, \"age\": 27, \"boolean\":true, \"string\": \"Hey!\", \"boolean2\":false}");
 
-        JsonObjectImpl impl1 = new JsonObjectImpl("{ \"first_name\": \"John\", \"last_name\": \"Smith\", \"alived\": true, \"age\": 27");
+//        JsonObjectImpl impl1 = new JsonObjectImpl("{ \"first_name\": \"John\", \"last_name\": \"Smith\", \"alived\": true, \"age\": 27");
+        JsonObjectImpl impl1 = new JsonObjectImpl("""
+                { "first_name": "John",  "age": 27, "favorite_pet": {"type": "dog", "legs":4}, "pets": [{"type": "cat", "legs":4}, {"type": "bird", "legs":2}] }
+                """);
 //        JsonObjectImpl impl2 = new JsonObjectImpl("{ \"first_name\": \"John\", \"last_name\": \"Smith\", \"is_alive\": true, \"age\": 27, \"array\": [1,2,3], \"salary\": 234.234 , \"anotherPerson\": { \"first_name\": \"John\", \"last_name\": \"Smith\", \"is_alive\": true, \"age\": 27}}");
-        System.out.println(impl1.to(Person.class));
+        System.out.println(impl1.parseObject(Person.class, impl1.parsedJsonElements));
 
     }
 }
