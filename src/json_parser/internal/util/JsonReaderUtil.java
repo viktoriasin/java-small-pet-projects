@@ -1,18 +1,18 @@
-package json_parser.internal;
+package json_parser.internal.util;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class JsonParserUtil {
+public class JsonReaderUtil {
     private final char[] jsonChars;
     private int currentCharIndex = 0;
 
-    public JsonParserUtil(String jsonString) {
+    public JsonReaderUtil(String jsonString) {
         this.jsonChars = jsonString.toCharArray();
     }
 
-    public Map<String, Object> parseObject() {
+    public Map<String, Object> readObject() {
 
         if (isCurrentIndexOutOfArrayBounds()) return null;
 
@@ -27,7 +27,7 @@ public class JsonParserUtil {
 
             skipExtraSpaces();
 
-            String key = parseKey();
+            String key = readKey();
 
             if (key == null) {
                 currentCharIndex++;
@@ -36,34 +36,34 @@ public class JsonParserUtil {
 
             skipExtraSpaces();
 
-            Object value = parseValue();
+            Object value = readValue();
 
             parsedObjectMap.put(key, value);
 
         }
     }
 
-    private String parseKey() {
-        return parseString();
+    public String readKey() {
+        return readString();
     }
 
-    private Object parseValue() {
+    public Object readValue() {
         if (isCurrentIndexOutOfArrayBounds()) return null;
 
         return Stream
-                .<Function<JsonParserUtil, Object>>of(
-                        JsonParserUtil::parseBoolean,
-                        JsonParserUtil::parseString,
-                        JsonParserUtil::parseNumber,
-                        JsonParserUtil::parseArray,
-                        JsonParserUtil::parseObject,
-                        JsonParserUtil::parseNullTerminal
+                .<Function<JsonReaderUtil, Object>>of(
+                        JsonReaderUtil::readBoolean,
+                        JsonReaderUtil::readString,
+                        JsonReaderUtil::readNumber,
+                        JsonReaderUtil::readArray,
+                        JsonReaderUtil::readObject,
+                        JsonReaderUtil::readNullTerminal
                 )
                 .reduce(Optional.empty(), (acc, parser) -> acc.isPresent() ? acc : Optional.ofNullable(parser.apply(this)), (a, _) -> a)
                 .orElse(null);
     }
 
-    private String parseString() {
+    public String readString() {
         if (isCurrentIndexOutOfArrayBounds()) return null;
 
         if (jsonChars[currentCharIndex] != '"') {
@@ -86,7 +86,7 @@ public class JsonParserUtil {
         return null;
     }
 
-    private Boolean parseBoolean() {
+    public Boolean readBoolean() {
         if (isCurrentIndexOutOfArrayBounds()) return null;
 
         if (jsonChars[currentCharIndex] != 't' && jsonChars[currentCharIndex] != 'f') {
@@ -111,7 +111,7 @@ public class JsonParserUtil {
         }
     }
 
-    private Object[] parseArray() {
+    public Object[] readArray() {
         if (isCurrentIndexOutOfArrayBounds()) return null;
 
         if (jsonChars[currentCharIndex] != '[') {
@@ -125,7 +125,7 @@ public class JsonParserUtil {
 //                return result.toArray();
 //            }
 
-            result.add(parseValue());
+            result.add(readValue());
 
             if (currentCharIndex < jsonChars.length && jsonChars[currentCharIndex] == ']') {
                 currentCharIndex++;
@@ -137,7 +137,7 @@ public class JsonParserUtil {
         return result.toArray();
     }
 
-    private Number parseNumber() {
+    public Number readNumber() {
         if (isCurrentIndexOutOfArrayBounds()) return null;
 
         char jsonChar = jsonChars[currentCharIndex];
@@ -178,7 +178,7 @@ public class JsonParserUtil {
         }
     }
 
-    private Void parseNullTerminal() {
+    public Void readNullTerminal() {
         if (currentCharIndex >= jsonChars.length) {
             throw new IllegalArgumentException();
         }
@@ -193,7 +193,7 @@ public class JsonParserUtil {
         return null;
     }
 
-    private void skipExtraSpaces() {
+    public void skipExtraSpaces() {
         while (currentCharIndex < jsonChars.length
                 && (jsonChars[currentCharIndex] == ' '
                 || jsonChars[currentCharIndex] == ':'
@@ -205,7 +205,7 @@ public class JsonParserUtil {
         }
     }
 
-    private boolean isCurrentIndexOutOfArrayBounds() {
+    public boolean isCurrentIndexOutOfArrayBounds() {
         return currentCharIndex >= jsonChars.length;
     }
 }

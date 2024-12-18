@@ -1,4 +1,4 @@
-package json_parser.internal;
+package json_parser.internal.handlers;
 
 import json_parser.annotations.JsonProperty;
 import json_parser.annotations.JsonPropertyIgnored;
