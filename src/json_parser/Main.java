@@ -13,7 +13,8 @@ public class Main {
 
 //        JsonObjectImpl impl1 = new JsonObjectImpl("{ \"first_name\": \"John\", \"last_name\": \"Smith\", \"alived\": true, \"age\": 27");
         JsonObjectImpl impl1 = new JsonObjectImpl("""
-                { "first_name": "John",  "age": 27, "favorite_pet": {"type": "dog", "legs":4}, "pets": [{"type": "cat", "legs":4}, {"type": "bird", "legs":2}] }
+                { "first_name": "John",  "age": 27, "favorite_pet": {"type": "dog", "legs":4}, "pets": [[[{"type": "cat", "legs":4}, {"type": "bird", "legs":2}]]], "petsList": [{"type": "cat", "legs":4}, {"type": "bird", "legs":2}], "petMap": {"kitty":{"type": "cat", "legs":4}, "oliver":{"type": "cat", "legs":4}},
+                 "petSet":[{"type": "cat", "legs":4}, {"type": "bird", "legs":2}]}
                 """);
 //        JsonObjectImpl impl2 = new JsonObjectImpl("{ \"first_name\": \"John\", \"last_name\": \"Smith\", \"is_alive\": true, \"age\": 27, \"array\": [1,2,3], \"salary\": 234.234 , \"anotherPerson\": { \"first_name\": \"John\", \"last_name\": \"Smith\", \"is_alive\": true, \"age\": 27}}");
         System.out.println(impl1.parseObject(Person.class, impl1.parsedJsonElements));

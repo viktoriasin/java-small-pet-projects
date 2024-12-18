@@ -3,9 +3,8 @@ package json_parser.internal;
 import json_parser.exceptions.JsonParserException;
 import json_parser.json.JsonObject;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.util.Map;
+import java.lang.reflect.*;
+import java.util.*;
 
 public class JsonObjectImpl implements JsonObject {
     public final Map<String, Object> parsedJsonElements;
@@ -26,28 +25,66 @@ public class JsonObjectImpl implements JsonObject {
             Class<?> fieldType = field.getType();
 
             Object fieldValue = data.get(fieldName);
-            if (fieldType == Integer.class || fieldType == String.class) {
-                field.set(instance, fieldValue);
-            } else if (fieldType.isArray()) {
-                Object[] objectArray = (Object[]) fieldValue;
-                Class<?> arrayElementType = fieldType.getComponentType();
-
-                Object[] extractedObject = (Object[]) Array.newInstance(arrayElementType, objectArray.length);
-                for (int i = 0; i < objectArray.length; i++) {
-                    if (arrayElementType == Integer.class || arrayElementType == String.class) {
-                        extractedObject[i] = objectArray[i];
-                    } else if (arrayElementType.isArray()) {
-                        throw new UnsupportedOperationException();
-                    } else {
-                        extractedObject[i] = parseObject(arrayElementType, (Map<String, Object>) objectArray[i]);
-                    }
-                }
-                field.set(instance, extractedObject);
+            Type genericType = field.getGenericType();
+            if (genericType instanceof ParameterizedType) {
+                field.set(instance, parse(fieldType, fieldValue, ((ParameterizedType) genericType).getActualTypeArguments()));
             } else {
-                field.set(instance, parseObject(fieldType, (Map<String, Object>) fieldValue));
+                field.set(instance, parse(fieldType, fieldValue, null));
             }
         }
         return (T) instance;
+    }
+
+    public Object[] parseArray(Class<?> arrayElementType, Object[] arrayData, ParameterizedType genericType) throws Exception {
+        Object[] extractedObject = (Object[]) Array.newInstance(arrayElementType, arrayData.length);
+        for (int i = 0; i < arrayData.length; i++) {
+            extractedObject[i] = parse(arrayElementType, arrayData[i], null); // по условию задания внутри массивов без дженериков
+        }
+        return extractedObject;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Object parse(Class<?> clazz, Object data, Type[] genericTypes) throws Exception {
+        if (clazz == Boolean.class || clazz == String.class
+                || clazz == Integer.class || clazz == Character.class
+                || clazz == Long.class || clazz == Double.class
+                || clazz == Byte.class || clazz == Float.class
+        ) {
+            return data;
+        } else if (clazz.isArray()) {
+            return parseArray(clazz.getComponentType(), (Object[]) data, null); // по условию задания внутри массивов без дженериков
+        } else if (Collection.class.isAssignableFrom(clazz)) {
+            return parseCollection(clazz, (Object[]) data, genericTypes);
+        } else if (Map.class.isAssignableFrom(clazz)) {
+            return parseMap(clazz, (Map<Object, Object>) data, genericTypes);
+        } else {
+            return parseObject(clazz, (Map<String, Object>) data);
+        }
+    }
+
+    public Object parseMap(Class<?> clazz, Map<Object, Object> data, Type[] genericTypes) throws Exception {
+        Map<Object, Object> map = new HashMap<>(); // для упрощения берем базовые реализации. В идеале - надо проверять на конкретный тип
+        for (Map.Entry<Object, Object> o : data.entrySet()) {
+            Object key = parse((Class<?>) genericTypes[0], o.getKey(), null); // по условию задания внутри дженериков без дженериков
+            Object value = parse((Class<?>) genericTypes[1], o.getValue(), null); // по условию задания внутри дженериков без дженериков
+            map.put(key, value);
+        }
+        return map;
+    }
+
+    public Object parseCollection(Class<?> clazz, Object[] data,  Type[] genericTypes) throws Exception {
+        Collection<Object> collection;
+        if (List.class.isAssignableFrom(clazz)) {
+            collection = new ArrayList<>(); // для упрощения берем базовые реализации. В идеале - надо проверять на конкретный тип
+        } else if (Set.class.isAssignableFrom(clazz)) {
+            collection = new HashSet<>();
+        } else {
+            collection = new ArrayDeque<>();
+        }
+        for (Object collectionMember : data) {
+            collection.add(parse((Class<?>) genericTypes[0], collectionMember, null)); // по условию задания внутри дженериков без дженериков
+        }
+        return collection;
     }
 
     @Override
