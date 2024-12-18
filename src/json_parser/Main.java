@@ -1,8 +1,13 @@
 package json_parser;
 
 import json_parser.internal.JsonObjectImpl;
+import json_parser.internal.JsonParserImpl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -12,17 +17,33 @@ public class Main {
 //        new JsonObjectImpl("{ \"first_name\": \"John\", \"last_name\": \"Smith\", \"is_alive\": true, \"age\": 27, \"boolean\":true, \"string\": \"Hey!\", \"boolean2\":false}");
 
 //        JsonObjectImpl impl1 = new JsonObjectImpl("{ \"first_name\": \"John\", \"last_name\": \"Smith\", \"alived\": true, \"age\": 27");
-        JsonObjectImpl impl1 = new JsonObjectImpl("""
-                { "first_name": "John",  "age": 27, "favorite_pet": {"type": "dog", "legs":4}, "pets": [[[{"type": "cat", "legs":4}, {"type": "bird", "legs":2}]]], "petsList": [{"type": "cat", "legs":4}, {"type": "bird", "legs":2}], "petMap": {"kitty":{"type": "cat", "legs":4}, "oliver":{"type": "cat", "legs":4}},
-                 "petSet":[{"type": "cat", "legs":4}, {"type": "bird", "legs":2}], "nullString": null}
-                """);
-//        JsonObjectImpl impl2 = new JsonObjectImpl("{ \"first_name\": \"John\", \"last_name\": \"Smith\", \"is_alive\": true, \"age\": 27, \"array\": [1,2,3], \"salary\": 234.234 , \"anotherPerson\": { \"first_name\": \"John\", \"last_name\": \"Smith\", \"is_alive\": true, \"age\": 27}}");
-        System.out.println(impl1.parseObject(Person.class, impl1.parsedJsonElements));
-        System.out.println(impl1.parsedJsonElements);
+//        JsonObjectImpl impl1 = new JsonObjectImpl("""
+//                { "first_name": "John",  "age": 27, "favorite_pet": {"type": "dog", "legs":4}, "pets": [[[{"type": "cat", "legs":4}, {"type": "bird", "legs":2}]]], "petsList": [{"type": "cat", "legs":4}, {"type": "bird", "legs":2}], "petMap": {"kitty":{"type": "cat", "legs":4}, "oliver":{"type": "cat", "legs":4}},
+//                 "petSet":[{"type": "cat", "legs":4}, {"type": "bird", "legs":2}], "nullString": null}
+//                """);
+////        JsonObjectImpl impl2 = new JsonObjectImpl("{ \"first_name\": \"John\", \"last_name\": \"Smith\", \"is_alive\": true, \"age\": 27, \"array\": [1,2,3], \"salary\": 234.234 , \"anotherPerson\": { \"first_name\": \"John\", \"last_name\": \"Smith\", \"is_alive\": true, \"age\": 27}}");
+//        System.out.println(impl1.parseObject(Person.class, impl1.parsedJsonElements));
+//        System.out.println(impl1.parsedJsonElements);
+//
+//        Person p = impl1.parseObject(Person.class, impl1.parsedJsonElements);
+//        System.out.println(p.nullString);
 
-        Person p = impl1.parseObject(Person.class, impl1.parsedJsonElements);
-        System.out.println(p.nullString);
 
+        JsonParserImpl jsonParser = new JsonParserImpl();
+        DifficultPerson difficultPerson = new DifficultPerson("Name"
+                , "LastName"
+                , true
+                , Arrays.asList(1, 2)
+                , 27
+                , new Integer[]{1, 2, 3}
+                , new SimplePerson("qwe", 12)
+                , Arrays.asList("xyz", "abc")
+                , Arrays.asList(new SimplePerson("sd", 11))
+                , Map.of("sdsa", new SimplePerson("123123", 123))
+                , new Ints(new Integer[]{4, 5, 6})
+        );
+
+        System.out.println(JsonParserImpl.writeToString(difficultPerson));
     }
 }
 
