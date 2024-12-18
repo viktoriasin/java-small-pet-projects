@@ -4,11 +4,14 @@ import json_parser.json.JsonObject;
 import json_parser.json.JsonParser;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.RecordComponent;
 import java.util.Collection;
 import java.util.Map;
 
 public class JsonParserImpl implements JsonParser {
-    public static String writeToString(Object value) throws IllegalAccessException {
+    public static String writeToString(Object value) throws Exception {
         return writeObject(value);
     }
 
@@ -16,7 +19,7 @@ public class JsonParserImpl implements JsonParser {
         return new JsonObjectImpl(json);
     }
 
-    private static String write(Object value) throws IllegalAccessException {
+    private static String write(Object value) throws Exception {
         if (value != null) {
             if (value.getClass().isArray()) {
                 return writeArray((Object[]) value);
@@ -32,6 +35,8 @@ public class JsonParserImpl implements JsonParser {
                 return value.toString();
             } else if (value.getClass() == String.class || value.getClass() == Character.class) {
                 return writeString(value);
+            } else if (value.getClass().isRecord()) {
+                return writeRecord(value);
             } else {
                 return writeObject(value);
             }
@@ -40,7 +45,7 @@ public class JsonParserImpl implements JsonParser {
         }
     }
 
-    private static String writeMap(Map<Object, Object> value) throws IllegalAccessException {
+    private static String writeMap(Map<Object, Object> value) throws Exception {
         StringBuilder sb = new StringBuilder();
         processCollectionStringStart(sb, '{');
         for (Map.Entry<Object, Object> mapEntry : value.entrySet()) {
@@ -50,20 +55,40 @@ public class JsonParserImpl implements JsonParser {
         return sb.toString();
     }
 
-    static String writeObject(Object object) throws IllegalAccessException {
-        Field[] fields = object.getClass().getDeclaredFields();
+    static String writeRecord(Object object) throws Exception {
+        RecordComponent[] components = object.getClass().getRecordComponents();
         StringBuilder sb = new StringBuilder();
         processCollectionStringStart(sb, '{');
-        for (Field field : fields) {
+        for (var comp : components) {
+            Field field = object.getClass().getDeclaredField(comp.getName());
+            String fieldJsonName = AnnotationHandler.resolveFieldName(field);
             String name = field.getName();
-            Object value = field.get(object); // TODO Illegal access exception use getters
-            sb.append(name).append(":").append(write(value)).append(",");
+            if (!AnnotationHandler.isFieldIgnored(field)) {
+                Object value = comp.getAccessor().invoke(object);
+                sb.append(fieldJsonName).append(":").append(write(value)).append(",");
+            }
         }
         processCollectionStringEnd(sb, '}');
         return sb.toString();
     }
 
-    static String writeArray(Object[] array) throws IllegalAccessException {
+    static String writeObject(Object object) throws Exception {
+        Field[] fields = object.getClass().getDeclaredFields();
+        StringBuilder sb = new StringBuilder();
+        processCollectionStringStart(sb, '{');
+        for (Field field : fields) {
+            String fieldJsonName = AnnotationHandler.resolveFieldName(field);
+            String name = field.getName();
+            if (!AnnotationHandler.isFieldIgnored(field)) {
+                Object value = getObjectField(field, object);
+                sb.append(fieldJsonName).append(":").append(write(value)).append(",");
+            }
+        }
+        processCollectionStringEnd(sb, '}');
+        return sb.toString();
+    }
+
+    static String writeArray(Object[] array) throws Exception {
         StringBuilder sb = new StringBuilder();
         processCollectionStringStart(sb, '[');
         for (Object object : array) {
@@ -73,7 +98,7 @@ public class JsonParserImpl implements JsonParser {
         return sb.toString();
     }
 
-    static String writeCollection(Object collection) throws IllegalAccessException {
+    static String writeCollection(Object collection) throws Exception {
         StringBuilder sb = new StringBuilder();
         processCollectionStringStart(sb, '[');
         Collection<?> collection1 = (Collection<?>) collection;
@@ -99,5 +124,18 @@ public class JsonParserImpl implements JsonParser {
 
     static void processCollectionStringStart(StringBuilder sb, char symbolToAddAtTheStart) {
         sb.append(symbolToAddAtTheStart);
+    }
+
+    public static Object getObjectField(Field field, Object instance) throws Exception {
+        Object value;
+        if (!Modifier.isPublic(field.getModifiers())) {
+            Method getterMethod = null;
+            String fieldName = field.getName();
+            getterMethod = instance.getClass().getMethod("get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1), field.getType());
+            value = getterMethod.invoke(instance);
+        } else {
+            value = field.get(instance);
+        }
+        return value;
     }
 }
