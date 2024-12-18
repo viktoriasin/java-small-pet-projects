@@ -15,6 +15,7 @@ public class Person {
     public List<Pet> petsList;
     public Map<String, Pet> petMap;
     public Set<Pet> petSet;
+    public String nullString;
 
     @Override
     public String toString() {
@@ -25,7 +26,8 @@ public class Person {
                 ", pets=" + Arrays.toString(pets) +
                 ", petsList=" + petsList +
                 ", petMap=" + petMap +
-                ", petSetl=" + petSet +
+                ", petSet=" + petSet +
+                ", nullString='" + nullString + '\'' +
                 '}';
     }
 }
