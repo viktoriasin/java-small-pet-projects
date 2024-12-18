@@ -1,4 +1,13 @@
 package json_parser;
 
-public record Ints(Integer[] i) {
+import java.util.Arrays;
+import java.util.List;
+
+public record Ints(List<Integer> i) {
+    @Override
+    public String toString() {
+        return "Ints{" +
+                "i=" + i +
+                '}';
+    }
 }
