@@ -1,6 +1,5 @@
 package json_parser.internal;
 
-import json_parser.exceptions.JsonParserException;
 import json_parser.json.JsonObject;
 
 import java.lang.reflect.*;
@@ -27,6 +26,8 @@ public class JsonObjectImpl implements JsonObject {
             return parseCollection(clazz, (Object[]) data, genericTypes);
         } else if (Map.class.isAssignableFrom(clazz)) {
             return parseMap(clazz, (Map<Object, Object>) data, genericTypes);
+        } else if (clazz.isRecord()) {
+            return parseRecord(clazz, (Map<String, Object>) data);
         } else {
             return parseObject(clazz, (Map<String, Object>) data);
         }
@@ -38,7 +39,7 @@ public class JsonObjectImpl implements JsonObject {
         Object instance = clazz.getDeclaredConstructor().newInstance();
         for (Field field : fields) {
             String fieldJsonName = AnnotationHandler.resolveFieldName(field);
-            if (parsedJsonElements.containsKey(fieldJsonName) && !AnnotationHandler.isFieldIgnored(field)) {
+            if (data.containsKey(fieldJsonName) && !AnnotationHandler.isFieldIgnored(field)) {
                 Class<?> fieldType = field.getType();
 
                 Object fieldValue = data.get(fieldJsonName);
@@ -53,6 +54,37 @@ public class JsonObjectImpl implements JsonObject {
             } // TODO добавить обработку случаев, если объекта по имени нет в мапе и ессли поле помечено аннотацией ignored
         }
         return (T) instance;
+    }
+
+    public <T> T parseRecord(Class<T> clazz, Map<String, Object> data) throws Exception {
+        RecordComponent[] components = clazz.getRecordComponents();
+        Object[] fieldValues = new Object[components.length];
+
+        for (int i = 0; i < components.length; i++) {
+            RecordComponent comp = components[i];
+            String fieldJsonName = AnnotationHandler.resolveFieldName(comp);
+            String recordComponentName = comp.getName();
+            if (data.containsKey(fieldJsonName) && !AnnotationHandler.isFieldIgnored(comp)) {
+                Class<?> fieldType = comp.getType();
+                Object fieldValue = data.get(fieldJsonName);
+                Object value;
+                if (comp.getGenericType() instanceof ParameterizedType) {
+                    value = parse(fieldType, fieldValue, ((ParameterizedType) comp.getGenericType()).getActualTypeArguments());
+                } else {
+                    value = parse(fieldType, fieldValue, null);
+                }
+                fieldValues[i] = value;
+            }
+        }
+        return (T) canonicalConstructorOfRecord(clazz).newInstance(fieldValues);
+    }
+
+    static <T> Constructor<T> canonicalConstructorOfRecord(Class<T> recordClass)
+            throws NoSuchMethodException, SecurityException {
+        Class<?>[] componentTypes = Arrays.stream(recordClass.getRecordComponents())
+                .map(rc -> rc.getType())
+                .toArray(Class<?>[]::new);
+        return recordClass.getDeclaredConstructor(componentTypes);
     }
 
     public Object[] parseArray(Class<?> arrayElementType, Object[] arrayData, ParameterizedType genericType) throws Exception {
@@ -101,6 +133,9 @@ public class JsonObjectImpl implements JsonObject {
 
     @Override
     public <T> T to(Class<T> targetType) throws Exception {
+        if (targetType.isRecord()) {
+            return parseRecord(targetType, parsedJsonElements);
+        }
         return parseObject(targetType, parsedJsonElements);
     }
 }

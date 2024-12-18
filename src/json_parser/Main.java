@@ -29,21 +29,28 @@ public class Main {
 //        System.out.println(p.nullString);
 
 
-        JsonParserImpl jsonParser = new JsonParserImpl();
-        DifficultPerson difficultPerson = new DifficultPerson("Name"
-                , "LastName"
-                , true
-                , Arrays.asList(1, 2)
-                , 27
-                , new Integer[]{1, 2, 3}
-                , new SimplePerson("qwe", 12)
-                , Arrays.asList("xyz", "abc")
-                , Arrays.asList(new SimplePerson("sd", 11))
-                , Map.of("sdsa", new SimplePerson("123123", 123))
-                , new Ints(new Integer[]{4, 5, 6})
-        );
+//        JsonParserImpl jsonParser = new JsonParserImpl();
+//        DifficultPerson difficultPerson = new DifficultPerson("Name"
+//                , "LastName"
+//                , true
+//                , Arrays.asList(1, 2)
+//                , 27
+//                , new Integer[]{1, 2, 3}
+//                , new SimplePerson("qwe", 12)
+//                , Arrays.asList("xyz", "abc")
+//                , Arrays.asList(new SimplePerson("sd", 11))
+//                , Map.of("sdsa", new SimplePerson("123123", 123))
+//                , new Ints(new Integer[]{4, 5, 6})
+//        );
+//
+//        System.out.println(JsonParserImpl.writeToString(difficultPerson));
 
-        System.out.println(JsonParserImpl.writeToString(difficultPerson));
+        JsonObjectImpl impl1 = new JsonObjectImpl("""
+                {"i":{"i":[1,2,3]}}
+                """);
+        System.out.println(impl1.to(RecordHandler.class));
+        System.out.println(impl1.parsedJsonElements);
+
     }
 }
 
