@@ -45,11 +45,17 @@ public class Main {
 //
 //        System.out.println(JsonParserImpl.writeToString(difficultPerson));
 
+//        JsonObjectImpl impl1 = new JsonObjectImpl("""
+//                {"i":{"i":[1,2,3]}, "x":1, "o":[1,2,3]}
+//                """);
+//        System.out.println(impl1.to(RecordHandler.class));
+//        System.out.println(impl1.parsedJsonElements);
+
         JsonObjectImpl impl1 = new JsonObjectImpl("""
-                {"i":{"i":[1,2,3]}}
+                {"i":["a","b"]
                 """);
-        System.out.println(impl1.to(RecordHandler.class));
-        System.out.println(impl1.parsedJsonElements);
+        System.out.println(impl1.to(PrimitiveHandler.class));
+
 
     }
 }
