@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.id="json_parser:main" external.linked.project.path="$MODULE_DIR$/../../src/json_parser" external.root.project.path="$MODULE_DIR$/../../src/json_parser" external.system.id="GRADLE" external.system.module.group="hometask.json" external.system.module.type="sourceSet" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager">
-    <output url="file://$MODULE_DIR$/../../src/json_parser/build/classes/java/main" />
-    <exclude-output />
-    <content url="file://$MODULE_DIR$/../../src/json_parser/src/main">
+<module version="4">
+  <component name="AdditionalModuleElements">
+    <content url="file://$MODULE_DIR$/../../src/json_parser/src/main" dumb="true">
       <sourceFolder url="file://$MODULE_DIR$/../../src/json_parser/src/main/java" isTestSource="false" />
     </content>
-    <orderEntry type="inheritedJdk" />
-    <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
