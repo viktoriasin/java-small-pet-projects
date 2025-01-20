@@ -1,5 +1,6 @@
 package hometask.internal.util;
 
+import hometask.exceptions.JsonParserException;
 import hometask.internal.handlers.AnnotationHandler;
 
 import java.lang.reflect.*;
@@ -23,22 +24,11 @@ public class JsonToObjectWriterUtil {
 
     @SuppressWarnings("unchecked")
     public Object parse(Class<?> clazz, Object data, Type[] genericTypes) throws Exception {
-        if (clazz == short.class || Short.class.isAssignableFrom(clazz)) {
-            return (short) ((int) data);
-        } else if (clazz == byte.class || Byte.class.isAssignableFrom(clazz)) {
-            return (byte) ((int) data);
-        } else if (clazz == long.class || Long.class.isAssignableFrom(clazz)) {
-            return (long) ((int) data);
-        } else if (clazz == float.class || Float.class.isAssignableFrom(clazz)) {
-            return (float) ((int) data);
-        } else if (clazz == double.class || Double.class.isAssignableFrom(clazz)) {
-            return (double) ((int) data);
-        } else if (clazz == char.class || Character.class.isAssignableFrom(clazz)) {
-            return data.toString().toCharArray()[0];
-        } else if (clazz == Boolean.class || clazz == String.class
-                || clazz == boolean.class
-                || clazz == int.class || Integer.class.isAssignableFrom(clazz)
-        ) {
+        if (clazz.isPrimitive()) {
+            return parsePrimitive(clazz, data);
+        } else if (Number.class.isAssignableFrom(clazz)) {
+            return parseWrapperNumber(clazz, data);
+        } else if (clazz == String.class) {
             return data;
         } else if (clazz.isArray()) {
             return parseArray(clazz.getComponentType(), (Object[]) data, null); // по условию задания внутри массивов без дженериков
@@ -53,37 +43,78 @@ public class JsonToObjectWriterUtil {
         }
     }
 
+    private Object parseWrapperNumber(Class<?> clazz, Object data) {
+        if (Short.class.isAssignableFrom(clazz)) {
+            return Short.parseShort(data.toString());
+        } else if (Byte.class.isAssignableFrom(clazz)) {
+            return Byte.parseByte(data.toString());
+        } else if (Long.class.isAssignableFrom(clazz)) {
+            return Long.parseLong(data.toString());
+        } else if (Float.class.isAssignableFrom(clazz)) {
+            return Float.parseFloat(data.toString());
+        } else if (Double.class.isAssignableFrom(clazz)) {
+            return Double.parseDouble(data.toString());
+        } else if (Character.class.isAssignableFrom(clazz)) {
+            return data.toString().toCharArray()[0];
+        } else {
+            return data;
+        }
+    }
+
+    private Object parsePrimitive(Class<?> clazz, Object data) {
+        if (clazz == short.class) {
+            return (short) ((int) data);
+        } else if (clazz == byte.class) {
+            return (byte) ((int) data);
+        } else if (clazz == long.class) {
+            return (long) ((int) data);
+        } else if (clazz == float.class) {
+            return data;
+        } else if (clazz == double.class) {
+            return data;
+        } else if (clazz == char.class) {
+            return data.toString().toCharArray()[0];
+        } else  {
+            // clazz == boolean.class || clazz == int.class
+            return data;
+        }
+    }
+
     @SuppressWarnings("unchecked")
-    public <T> T parseObject(Class<T> clazz, Object dataSrc) throws Exception {
+    public <T> T parseObject(Class<T> clazz, Object dataSrc) throws JsonParserException {
         if (Map.class.isAssignableFrom(dataSrc.getClass())) { // Если нам передали по факту int, который положили в object, тогда во внутреннем представлении он будет в виде значении а не мапы
             Map<String, Object> data = (Map<String, Object>) dataSrc;
             Field[] fields = clazz.getDeclaredFields();
-            Object instance = clazz.getDeclaredConstructor().newInstance();
-            for (Field field : fields) {
-                String fieldJsonName = AnnotationHandler.resolveFieldName(field);
-                if (data.containsKey(fieldJsonName) && !AnnotationHandler.isFieldIgnored(field)) {
-                    Class<?> fieldType = field.getType();
+            try {
+                Object instance = clazz.getDeclaredConstructor().newInstance();
+                for (Field field : fields) {
+                    String fieldJsonName = AnnotationHandler.resolveFieldName(field);
+                    if (data.containsKey(fieldJsonName) && !AnnotationHandler.isFieldIgnored(field)) {
+                        Class<?> fieldType = field.getType();
 
-                    Object fieldValue = data.get(fieldJsonName);
-                    Type genericType = field.getGenericType();
-                    Object value;
-                    if (genericType instanceof ParameterizedType) {
-                        value = parse(fieldType, fieldValue, ((ParameterizedType) genericType).getActualTypeArguments());
-                    } else {
-                        value = parse(fieldType, fieldValue, null);
-                    }
-                    if (value instanceof ArrayHolder arrayHolder) {
-                        if (arrayHolder.isPrimitive) {
-                            setPrimitiveArrayFieldField(field, instance, arrayHolder, clazz);
+                        Object fieldValue = data.get(fieldJsonName);
+                        Type genericType = field.getGenericType();
+                        Object value;
+                        if (genericType instanceof ParameterizedType) {
+                            value = parse(fieldType, fieldValue, ((ParameterizedType) genericType).getActualTypeArguments());
                         } else {
-                            setObjectField(field, instance, arrayHolder.array, clazz);
+                            value = parse(fieldType, fieldValue, null);
                         }
-                    } else {
-                        setObjectField(field, instance, value, clazz);
-                    }
-                } // TODO добавить обработку случаев, если объекта по имени нет в мапе и ессли поле помечено аннотацией ignored
+                        if (value instanceof ArrayHolder arrayHolder) {
+                            if (arrayHolder.isPrimitive) {
+                                setPrimitiveArrayFieldField(field, instance, arrayHolder, clazz);
+                            } else {
+                                setObjectField(field, instance, arrayHolder.array, clazz);
+                            }
+                        } else {
+                            setObjectField(field, instance, value, clazz);
+                        }
+                    } // TODO добавить обработку случаев, если объекта по имени нет в мапе и ессли поле помечено аннотацией ignored
+                }
+                return (T) instance;
+            } catch (Exception e) {
+                throw new JsonParserException(e.toString());
             }
-            return (T) instance;
         } else {
             return (T) dataSrc;
         }
@@ -158,7 +189,7 @@ public class JsonToObjectWriterUtil {
     }
 
 
-    public <T> T parseRecord(Class<T> clazz, Map<String, Object> data) throws Exception {
+    public <T> T parseRecord(Class<T> clazz, Map<String, Object> data) throws JsonParserException {
         RecordComponent[] components = clazz.getRecordComponents();
         Object[] fieldValues = new Object[components.length];
 
@@ -170,15 +201,23 @@ public class JsonToObjectWriterUtil {
                 Class<?> fieldType = comp.getType();
                 Object fieldValue = data.get(fieldJsonName);
                 Object value;
-                if (comp.getGenericType() instanceof ParameterizedType) {
-                    value = parse(fieldType, fieldValue, ((ParameterizedType) comp.getGenericType()).getActualTypeArguments());
-                } else {
-                    value = parse(fieldType, fieldValue, null);
+                try {
+                    if (comp.getGenericType() instanceof ParameterizedType) {
+                        value = parse(fieldType, fieldValue, ((ParameterizedType) comp.getGenericType()).getActualTypeArguments());
+                    } else {
+                        value = parse(fieldType, fieldValue, null);
+                    }
+                } catch (Exception e) {
+                    throw new JsonParserException(e.toString());
                 }
                 fieldValues[i] = value;
             }
         }
-        return (T) canonicalConstructorOfRecord(clazz).newInstance(fieldValues);
+        try {
+            return (T) canonicalConstructorOfRecord(clazz).newInstance(fieldValues);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new JsonParserException(e.toString());
+        }
     }
 
     public Object parseArray(Class<?> arrayElementType, Object[] arrayData, ParameterizedType genericType) throws Exception {

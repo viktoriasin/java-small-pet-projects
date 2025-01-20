@@ -63,7 +63,7 @@ public class JsonToStringWriterUtil {
         return sb.toString();
     }
 
-    public static String writeObject(Object object) throws Exception {
+    public static String writeObject(Object object)  {
         Field[] fields = object.getClass().getDeclaredFields();
         StringBuilder sb = new StringBuilder();
         processCollectionStringStart(sb, '{');
@@ -71,8 +71,12 @@ public class JsonToStringWriterUtil {
             String fieldJsonName = AnnotationHandler.resolveFieldName(field);
             String name = field.getName();
             if (!AnnotationHandler.isFieldIgnored(field)) {
-                Object value = getObjectField(field, object);
-                sb.append(fieldJsonName).append(":").append(write(value)).append(",");
+                try {
+                    Object value = getObjectField(field, object);
+                    sb.append(fieldJsonName).append(":").append(write(value)).append(",");
+                } catch (Exception e) {
+
+                }
             }
         }
         processCollectionStringEnd(sb, '}');

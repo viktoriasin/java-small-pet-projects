@@ -1,5 +1,6 @@
 package hometask.test.data;
 
+import hometask.json.JsonObject;
 import hometask.json.JsonParser;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +38,7 @@ class JsonParserTest {
     @Test
     void shouldParseJsonSeveralTimesFromIR() {
         // given
-        JsonParser ir = JsonParser.parse(allTypesJson());
+        JsonObject ir = JsonParser.parse(allTypesJson());
 
         // when
         FullRecord firstParsed = ir.to(FullRecord.class);
@@ -50,7 +51,7 @@ class JsonParserTest {
     @Test
     void shouldParseJsonToDifferentTypesFromIR() {
         // given
-        JsonParser ir = JsonParser.parse(allTypesJson());
+        JsonObject ir = JsonParser.parse(allTypesJson());
 
         // when
         FullRecord fullRecord = ir.to(FullRecord.class);

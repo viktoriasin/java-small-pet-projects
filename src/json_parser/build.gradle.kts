@@ -8,16 +8,6 @@ plugins {
     id("com.diffplug.spotless")
 }
 
-idea {
-    project {
-        languageLevel = IdeaLanguageLevel(21)
-    }
-    module {
-        isDownloadJavadoc = true
-        isDownloadSources = true
-    }
-}
-
 group = "hometask.json"
 
 repositories {
@@ -48,12 +38,21 @@ configure<SonarLintExtension> {
     }
 }
 
-apply<com.diffplug.gradle.spotless.SpotlessPlugin>()
-configure<com.diffplug.gradle.spotless.SpotlessExtension> {
-    java {
-        palantirJavaFormat("2.39.0")
-    }
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+    options.compilerArgs.addAll(listOf("-Xlint:all,-serial,-processing"))
+
+    dependsOn("spotlessApply")
 }
+
+plugins.apply(JavaPlugin::class.java)
+extensions.configure<JavaPluginExtension> {
+    sourceCompatibility = JavaVersion.VERSION_23
+    targetCompatibility = JavaVersion.VERSION_23
+}
+
+
+
 
 dependencies {
     testImplementation ( platform("org.junit:junit-bom:5.10.0") )

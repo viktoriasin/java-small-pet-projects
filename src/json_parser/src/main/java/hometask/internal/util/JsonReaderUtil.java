@@ -16,6 +16,8 @@ public class JsonReaderUtil {
 
         if (isCurrentIndexOutOfArrayBounds()) return null;
 
+        skipExtraSpaces();
+
         if (jsonChars[currentCharIndex] != '{') {
             return null;
         }

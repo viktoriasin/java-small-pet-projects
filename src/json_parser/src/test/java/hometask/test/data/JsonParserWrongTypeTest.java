@@ -1,5 +1,6 @@
 package hometask.test.data;
 
+import hometask.json.JsonObject;
 import hometask.json.JsonParser;
 import hometask.exceptions.JsonParserException;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ class JsonParserWrongTypeTest {
         String json = "{\"id\": true}";
 
         // when
-        JsonParser ir = JsonParser.parse(json);
+        JsonObject ir = JsonParser.parse(json);
 
         // then
         assertThrows(JsonParserException.class, () -> ir.to(IntWrapper.class));
@@ -28,7 +29,7 @@ class JsonParserWrongTypeTest {
         String json = "{\"id\": \"42\"}";
 
         // when
-        JsonParser ir = JsonParser.parse(json);
+        JsonObject ir = JsonParser.parse(json);
 
         // then
         assertThrows(JsonParserException.class, () -> ir.to(IntWrapper.class));
@@ -41,7 +42,7 @@ class JsonParserWrongTypeTest {
         String json = "{\"id\": 42}";
 
         // when
-        JsonParser ir = JsonParser.parse(json);
+        JsonObject ir = JsonParser.parse(json);
 
         // then
         assertThrows(JsonParserException.class, () -> ir.to(StringWrapper.class));
