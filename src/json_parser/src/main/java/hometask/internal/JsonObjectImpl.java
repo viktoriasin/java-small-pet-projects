@@ -1,11 +1,10 @@
 package hometask.internal;
 
-import json_parser.internal.handlers.AnnotationHandler;
-import json_parser.internal.util.JsonReaderUtil;
-import json_parser.internal.util.JsonToObjectWriterUtil;
-import json_parser.json.JsonObject;
+import hometask.exceptions.JsonParserException;
+import hometask.internal.util.JsonReaderUtil;
+import hometask.internal.util.JsonToObjectWriterUtil;
+import hometask.json.JsonObject;
 
-import java.lang.reflect.*;
 import java.util.*;
 
 public class JsonObjectImpl implements JsonObject {
@@ -16,7 +15,7 @@ public class JsonObjectImpl implements JsonObject {
     }
 
     @Override
-    public <T> T to(Class<T> targetType) throws Exception {
+    public <T> T to(Class<T> targetType) throws JsonParserException {
         JsonToObjectWriterUtil jsonToObjectWriterUtil = new JsonToObjectWriterUtil();
         if (targetType.isRecord()) {
             return jsonToObjectWriterUtil.parseRecord(targetType, parsedJsonElements);

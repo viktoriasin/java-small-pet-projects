@@ -1,7 +1,7 @@
 package hometask.internal.handlers;
 
-import json_parser.annotations.JsonProperty;
-import json_parser.annotations.JsonPropertyIgnored;
+import hometask.annotations.JsonProperty;
+import hometask.annotations.JsonPropertyIgnored;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.RecordComponent;
