@@ -223,7 +223,7 @@ public class JsonToObjectWriterUtil {
         }
         try {
             return (T) canonicalConstructorOfRecord(clazz).newInstance(fieldValues);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (Exception e) {
             throw new JsonParserException(e.toString());
         }
     }
