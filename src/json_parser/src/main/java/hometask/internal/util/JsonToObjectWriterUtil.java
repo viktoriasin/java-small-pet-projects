@@ -240,7 +240,7 @@ public class JsonToObjectWriterUtil {
         }
         Object[] extractedObject = (Object[]) Array.newInstance(wrapperClass, arrayData.length);
         for (int i = 0; i < arrayData.length; i++) {
-            extractedObject[i] = parse(arrayElementType, arrayData[i], null); // по условию задания внутри массивов без дженериков
+            extractedObject[i] = parse(arrayElementType, arrayData[i], null); // TODO: добавить вложенные дженерики по условию задания внутри массивов без дженериков
         }
         arrayHolder.array = extractedObject;
         return arrayHolder;
