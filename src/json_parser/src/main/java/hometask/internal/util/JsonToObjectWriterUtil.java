@@ -100,7 +100,7 @@ public class JsonToObjectWriterUtil {
                         } else {
                             value = parse(fieldType, fieldValue, null);
                         }
-                        if (value instanceof ArrayHolder arrayHolder) {
+                        if (value instanceof ObjectArrayHolder arrayHolder) {
                             if (arrayHolder.isPrimitive) {
                                 setPrimitiveArrayFieldField(field, instance, arrayHolder, clazz);
                             } else {
@@ -120,72 +120,74 @@ public class JsonToObjectWriterUtil {
         }
     }
 
-    private <T> void setPrimitiveArrayFieldField(Field field, Object instance, ArrayHolder arrayHolder, Class<T> clazz) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+    private <T> void setPrimitiveArrayFieldField(Field field, Object instance, ObjectArrayHolder arrayHolder, Class<T> clazz) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        // TODO: разделить setter и создание массива
         if (Modifier.isPublic(field.getModifiers())) {
             Method setterMethod = null;
             String fieldName = field.getName();
-            if (arrayHolder.primitiveType == int.class) {
-                int[] result = new int[arrayHolder.array.length];
-                for (int i = 0; i < arrayHolder.array.length; i++) {
-                    result[i] = (int) arrayHolder.array[i];
-                }
-                setterMethod = clazz.getMethod(getMethodName(fieldName), field.getType());
-                setterMethod.invoke(instance, result);
-            } else if (arrayHolder.primitiveType == byte.class) {
-                byte[] result = new byte[arrayHolder.array.length];
-                for (int i = 0; i < arrayHolder.array.length; i++) {
-                    result[i] = (byte) arrayHolder.array[i];
-                }
-                setterMethod = clazz.getMethod(getMethodName(fieldName), field.getType());
-                setterMethod.invoke(instance, result);
-            } else if (arrayHolder.primitiveType == long.class) {
-                long[] result = new long[arrayHolder.array.length];
-                for (int i = 0; i < arrayHolder.array.length; i++) {
-                    result[i] = (long) arrayHolder.array[i];
-                }
-                setterMethod = clazz.getMethod(getMethodName(fieldName), field.getType());
-                setterMethod.invoke(instance, result);
-            } else if (arrayHolder.primitiveType == double.class) {
-                double[] result = new double[arrayHolder.array.length];
-                for (int i = 0; i < arrayHolder.array.length; i++) {
-                    result[i] = (double) arrayHolder.array[i];
-                }
-                setterMethod = clazz.getMethod(getMethodName(fieldName), field.getType());
-                setterMethod.invoke(instance, result);
-            } else if (arrayHolder.primitiveType == char.class) {
-                char[] result = new char[arrayHolder.array.length];
-                for (int i = 0; i < arrayHolder.array.length; i++) {
-                    result[i] = (char) arrayHolder.array[i];
-                }
-                setterMethod = clazz.getMethod(getMethodName(fieldName), field.getType());
-                setterMethod.invoke(instance, result);
-            } else if (arrayHolder.primitiveType == short.class) {
-                short[] result = new short[arrayHolder.array.length];
-                for (int i = 0; i < arrayHolder.array.length; i++) {
-                    result[i] = (short) arrayHolder.array[i];
-                }
-                setterMethod = clazz.getMethod(getMethodName(fieldName), field.getType());
-                setterMethod.invoke(instance, result);
-            } else if (arrayHolder.primitiveType == boolean.class) {
-                boolean[] result = new boolean[arrayHolder.array.length];
-                for (int i = 0; i < arrayHolder.array.length; i++) {
-                    result[i] = (boolean) arrayHolder.array[i];
-                }
-                setterMethod = clazz.getMethod(getMethodName(fieldName), field.getType());
-                setterMethod.invoke(instance, result);
-            } else if (arrayHolder.primitiveType == float.class) {
-                float[] result = new float[arrayHolder.array.length];
-                for (int i = 0; i < arrayHolder.array.length; i++) {
-                    result[i] = (float) arrayHolder.array[i];
-                }
-                setterMethod = clazz.getMethod(getMethodName(fieldName), field.getType());
-                setterMethod.invoke(instance, result);
-            }
+            PrimitiveArrayHolder primitiveArray = getPrimitiveArray(arrayHolder);
+            setterMethod = clazz.getMethod(getMethodName(fieldName), field.getType());
+            setterMethod.invoke(instance, primitiveArray.getArray()); // TODO: check fot nulls in getArray?
         }
     } // todo добавить случай, если private поля
 
     private static String getMethodName(String fieldName) {
         return "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+    }
+
+    public <T> PrimitiveArrayHolder getPrimitiveArray(ObjectArrayHolder arrayHolder) {
+        PrimitiveArrayHolder primitiveArrayHolder = new PrimitiveArrayHolder();
+        if (arrayHolder.primitiveType == int.class) {
+            int[] result = new int[arrayHolder.array.length];
+            for (int i = 0; i < arrayHolder.array.length; i++) {
+                result[i] = (int) arrayHolder.array[i];
+            }
+            primitiveArrayHolder.setIntArray(result);
+        } else if (arrayHolder.primitiveType == byte.class) {
+            byte[] result = new byte[arrayHolder.array.length];
+            for (int i = 0; i < arrayHolder.array.length; i++) {
+                result[i] = (byte) arrayHolder.array[i];
+            }
+            primitiveArrayHolder.setByteArray(result);
+        } else if (arrayHolder.primitiveType == long.class) {
+            long[] result = new long[arrayHolder.array.length];
+            for (int i = 0; i < arrayHolder.array.length; i++) {
+                result[i] = (long) arrayHolder.array[i];
+            }
+            primitiveArrayHolder.setLongArray(result);
+        } else if (arrayHolder.primitiveType == double.class) {
+            double[] result = new double[arrayHolder.array.length];
+            for (int i = 0; i < arrayHolder.array.length; i++) {
+                result[i] = (double) arrayHolder.array[i];
+            }
+            primitiveArrayHolder.setDoubleArray(result);
+        } else if (arrayHolder.primitiveType == char.class) {
+            char[] result = new char[arrayHolder.array.length];
+            for (int i = 0; i < arrayHolder.array.length; i++) {
+                result[i] = (char) arrayHolder.array[i];
+            }
+            primitiveArrayHolder.setCharArray(result);
+        } else if (arrayHolder.primitiveType == short.class) {
+            short[] result = new short[arrayHolder.array.length];
+            for (int i = 0; i < arrayHolder.array.length; i++) {
+                result[i] = (short) arrayHolder.array[i];
+            }
+            primitiveArrayHolder.setShortArray(result);
+        } else if (arrayHolder.primitiveType == boolean.class) {
+            boolean[] result = new boolean[arrayHolder.array.length];
+            for (int i = 0; i < arrayHolder.array.length; i++) {
+                result[i] = (boolean) arrayHolder.array[i];
+            }
+            primitiveArrayHolder.setBooleanArray(result);
+        } else if (arrayHolder.primitiveType == float.class) {
+            float[] result = new float[arrayHolder.array.length];
+            for (int i = 0; i < arrayHolder.array.length; i++) {
+                result[i] = (float) arrayHolder.array[i];
+            }
+            primitiveArrayHolder.setFloatArray(result);
+        }
+        return primitiveArrayHolder;
     }
 
 
@@ -210,7 +212,13 @@ public class JsonToObjectWriterUtil {
                 } catch (Exception e) {
                     throw new JsonParserException(e.toString());
                 }
-                fieldValues[i] = value;
+
+                if (value instanceof ObjectArrayHolder arrayHolder) {
+                    PrimitiveArrayHolder primitiveArrayHolder = getPrimitiveArray(arrayHolder);
+                    fieldValues[i] = primitiveArrayHolder.getArray();
+                } else {
+                    fieldValues[i] = value;
+                }
             }
         }
         try {
@@ -221,7 +229,7 @@ public class JsonToObjectWriterUtil {
     }
 
     public Object parseArray(Class<?> arrayElementType, Object[] arrayData, ParameterizedType genericType) throws Exception {
-        ArrayHolder arrayHolder = new ArrayHolder();
+        ObjectArrayHolder arrayHolder = new ObjectArrayHolder();
         Class<?> wrapperClass = null;
         if (arrayElementType.isPrimitive()) {
             wrapperClass = primitiveToWrapperClass.get(arrayElementType);
