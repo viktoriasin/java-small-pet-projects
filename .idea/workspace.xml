@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="PetProjects:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3e02aab7-853c-46ca-9049-cf74c893b4c5" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$/src/json_parser">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$/src/json_parser">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="json_parser" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="json_parser" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="json_parser" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Exception" />
+        <option value="Interface" />
+        <option value="Enum" />
+        <option value="AnnotationType" />
+        <option value="Record" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="json-parser-library" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/corretto-1.8.0_372/Contents/Home/src.zip!/java/io/FilterOutputStream.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/corretto-1.8.0_372/Contents/Home/src.zip!/java/io/InputStream.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/corretto-1.8.0_372/Contents/Home/src.zip!/java/lang/Character.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/corretto-1.8.0_372/Contents/Home/src.zip!/java/lang/Double.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/corretto-1.8.0_372/Contents/Home/src.zip!/java/lang/Integer.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/corretto-1.8.0_372/Contents/Home/src.zip!/java/lang/Object.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/corretto-1.8.0_372/Contents/Home/src.zip!/java/lang/String.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/corretto-1.8.0_372/Contents/Home/src.zip!/java/util/Collection.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/corretto-1.8.0_372/Contents/Home/src.zip!/java/util/Collections.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/corretto-1.8.0_372/Contents/Home/src.zip!/java/util/List.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/corretto-1.8.0_372/Contents/Home/src.zip!/java/util/Locale.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/corretto-1.8.0_372/Contents/Home/src.zip!/java/util/Objects.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/corretto-1.8.0_372/Contents/Home/src.zip!/java/util/Set.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-23/Contents/Home/lib/src.zip!/java.base/java/lang/Boolean.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-23/Contents/Home/lib/src.zip!/java.base/java/lang/Character.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-23/Contents/Home/lib/src.zip!/java.base/java/lang/IllegalArgumentException.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-23/Contents/Home/lib/src.zip!/java.base/java/lang/Runnable.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-23/Contents/Home/lib/src.zip!/java.base/java/lang/StringBuilder.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-23/Contents/Home/lib/src.zip!/java.base/java/lang/Void.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-23/Contents/Home/lib/src.zip!/java.base/java/lang/ref/Reference.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-23/Contents/Home/lib/src.zip!/java.base/java/lang/ref/WeakReference.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-23/Contents/Home/lib/src.zip!/java.base/java/util/Optional.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-23/Contents/Home/lib/src.zip!/java.base/java/util/function/BiFunction.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-23/Contents/Home/lib/src.zip!/java.base/java/util/function/BinaryOperator.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-23/Contents/Home/lib/src.zip!/java.base/java/util/function/Function.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-23/Contents/Home/lib/src.zip!/java.base/java/util/function/Predicate.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-23/Contents/Home/lib/src.zip!/java.base/java/util/function/Supplier.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-23/Contents/Home/lib/src.zip!/java.base/java/util/regex/Pattern.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-23/Contents/Home/lib/src.zip!/java.base/java/util/stream/Stream.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-23/Contents/Home/lib/src.zip!/java.desktop/sun/java2d/ReentrantContextProvider.java" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="KotlinScriptingSettings">
+    <scriptDefinition className="org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate" definitionName="KotlinBuildScript">
+      <order>2147483647</order>
+      <autoReloadConfigurations>true</autoReloadConfigurations>
+    </scriptDefinition>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="2" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="2SLZGrbbELVnFL0lwKt7FzooilM" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.CalculatorV2EntryPoint.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main (1).executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main (2).executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main (3).executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main (4).executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;Gradle.Build json_parser.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonParserNestedTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonParserNestedTest.shouldParseJsonToClassWithCollections.executor&quot;: &quot;Debug&quot;,
+    &quot;Gradle.JsonParserNestedTest.shouldParseJsonToRecordWithCollections.executor&quot;: &quot;Debug&quot;,
+    &quot;Gradle.JsonParserNestedTest.shouldParseJsonToRecursiveClass.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonParserNestedTest.shouldParseJsonToRecursiveRecord.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonParserNestedTest.shouldParseJsonToSimpleNestedRecord.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonParserTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonParserTest.shouldParseEmptyJsonToClass.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonParserTest.shouldParseJsonIgnoringOtherKeys.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonParserTest.shouldParseJsonSeveralTimesFromIR.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonParserTest.shouldParseJsonToClass.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonParserTest.shouldParseJsonToClassUsingJsonProperty.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonParserTest.shouldParseJsonToDifferentTypesFromIR.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonParserTest.shouldParseJsonToRecord.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonParserTest.shouldParseJsonToRecordUsingJsonProperty.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonParserWrongTypeTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonParserWrongTypeTest.shouldThrowJsonParserExceptionWhenParsedBooleanAsInt.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonParserWrongTypeTest.shouldThrowJsonParserExceptionWhenParsedIntAsAString.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonParserWrongTypeTest.shouldThrowJsonParserExceptionWhenParsedStringAsAnInteger.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonWriterNestedTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonWriterNestedTest.shouldParseJsonToSimpleNestedRecord.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonWriterTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonWriterTest.shouldWriteClassToJson.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonWriterTest.shouldWriteClassToJsonIgnoringNullValues.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonWriterTest.shouldWriteRecordToJson.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.JsonWriterTest.shouldWriteRecordToJsonIgnoringNullValues.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.json_parser [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.json_parser [spotlessApply].executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.InMemoryLibraryTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.InMemoryLibraryTest.testAddAuthor_ExistingAuthor.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.InMemoryLibraryTest.testCalculateTotalPriceOfBooksByCategory.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.InMemoryLibraryTest.testFindAuthorsWithBooksInMultipleCategories.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.InMemoryLibraryThreashold1Test.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.InMemoryLibraryThreashold1Test.testFindAuthorsWithBooksInMultipleCategories.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.InMemoryLibraryThreashold1Test.testGetBooksByTitleLikeIgnoreCase_CaseInsensitive.executor&quot;: &quot;Debug&quot;,
+    &quot;JUnit.JsonParserTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.SkipListSetTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.Whole project.executor&quot;: &quot;Run&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/victoria/IdeaProjects/PetProjects/src/json_parser&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;GitIgnore&quot;
+    ]
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="json_parser.internal" />
+      <recent name="library" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/json_parser" />
+      <recent name="$PROJECT_DIR$/src/json_parser/src/test/java" />
+      <recent name="$PROJECT_DIR$/src/library/test" />
+      <recent name="$PROJECT_DIR$/src/library/" />
+      <recent name="$PROJECT_DIR$/src/library/model" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/json_parser/src/main/java" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="calculator.v2" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Gradle.JsonParserNestedTest">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="json_parser.Main" />
+      <module name="PetProjects" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="json_parser.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="JsonParserNestedTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/src/json_parser" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;hometask.test.data.JsonParserNestedTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="JsonParserNestedTest.shouldParseJsonToSimpleNestedRecord" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/src/json_parser" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;hometask.test.data.JsonParserNestedTest.shouldParseJsonToSimpleNestedRecord&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="JsonParserTest.shouldParseJsonToClass" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/src/json_parser" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;hometask.test.data.JsonParserTest.shouldParseJsonToClass&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="JsonParserWrongTypeTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/src/json_parser" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;hometask.test.data.JsonParserWrongTypeTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="JsonWriterNestedTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/src/json_parser" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;hometask.test.data.JsonWriterNestedTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.JsonWriterNestedTest" />
+        <item itemvalue="Gradle.JsonParserWrongTypeTest" />
+        <item itemvalue="Gradle.JsonParserTest.shouldParseJsonToClass" />
+        <item itemvalue="Gradle.JsonParserNestedTest.shouldParseJsonToSimpleNestedRecord" />
+        <item itemvalue="Gradle.JsonParserNestedTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3e02aab7-853c-46ca-9049-cf74c893b4c5" name="Changes" comment="" />
+      <created>1688927730966</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1688927730966</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="HEAD" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/json_parser/src/main/java/hometask/internal/util/JsonReaderUtil.java</url>
+          <line>194</line>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/json_parser/src/main/java/hometask/internal/util/JsonToObjectWriterUtil.java</url>
+          <line>237</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/json_parser/src/main/java/hometask/internal/JsonObjectImpl.java</url>
+          <line>19</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/json_parser/src/main/java/hometask/internal/util/JsonToStringWriterUtil.java</url>
+          <line>65</line>
+          <option name="timeStamp" value="33" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
