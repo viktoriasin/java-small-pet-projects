@@ -50,6 +50,18 @@ public class ThreeLevelImageCache<T> implements ImageCache<T> {
         return strongImageCache.size() + softImageCache.size() + weakImageCache.size();
     }
 
+    public int strongCacheSize() {
+        return strongImageCache.size();
+    }
+
+    public int softCacheSize() {
+        return softImageCache.size();
+    }
+
+    public int weakCacheSize() {
+        return weakImageCache.size();
+    }
+
     @Override
     public void clear() {
         strongImageCache.clear();
