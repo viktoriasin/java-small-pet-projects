@@ -14,11 +14,11 @@ public class Main {
      * Чтобы сравнение было более достоверным, сначала выполним прогрев JVM.
      */
 
-    private static final int IMAGES_COUNT = 1000;
+    private static final int IMAGES_COUNT = 10_000;
     private static final int WARM_UP_ITERATIONS = 1000;
     private static final int MEASUREMENT_ITERATIONS = 1000;
-    private static final int STRONG_CACHE_SIZE = 100;
-    private static final int SOFT_CACHE_SIZE = 300;
+    private static final int STRONG_CACHE_SIZE = 1000;
+    private static final int SOFT_CACHE_SIZE = 3000;
     private static final int INITIAL_CAPACITY = 1000;
     private static final float LOAD_FACTOR = 1.1f;
     private static final float TEMPORARY_IMAGE_REFERENCE_HOLD_COUNT = 400; // регулирует, сколько мы будем держать сильных ссылок, чтобы сымитировать работу реального приложения
@@ -78,7 +78,7 @@ public class Main {
         for (int iteration = 0; iteration < 10; iteration++) {
             for (int i = 0; i < MEASUREMENT_ITERATIONS; i += 10) {
                 int index;
-                if (i % 500 == 0) {
+                if (i % 50 == 0) {
                     // получаем индекс изображения, которое еще не было в кеше
                     index = randomNewImageToLoadIndex();
                 } else {
@@ -118,7 +118,7 @@ public class Main {
         LinkedHashMap<Integer, byte[]> singleLevelCache = new LinkedHashMap<>(INITIAL_CAPACITY + 1, LOAD_FACTOR, true) {
             @Override
             protected boolean removeEldestEntry(Map.Entry<Integer, byte[]> eldest) {
-                return size() > IMAGES_COUNT;
+                return size() > IMAGES_COUNT / 2;
             }
         };
 
