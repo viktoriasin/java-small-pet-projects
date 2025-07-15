@@ -1,4 +1,5 @@
 import java.lang.ref.SoftReference;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -7,7 +8,7 @@ public class SoftImageCache<T> implements ImageCache<T> {
     private final LinkedHashMap<Object, SoftReference<T>> cache;
 
     public SoftImageCache(int capacity, int maxCacheSize, WeakImageCache<T> weakImageCache) {
-        this.cache = new LinkedHashMap<>(capacity + 1, 1.1f, true) {
+        this.cache = new LinkedHashMap<>(capacity, 0.75f, true) {
             @Override
             protected boolean removeEldestEntry(Map.Entry<Object, SoftReference<T>> eldest) {
                 if (size() > maxCacheSize) {
@@ -34,9 +35,8 @@ public class SoftImageCache<T> implements ImageCache<T> {
     }
 
     @Override
-    public boolean remove(Object key) {
+    public void remove(Object key) {
         cache.remove(key);
-        return true;
     }
 
     @Override
@@ -47,5 +47,9 @@ public class SoftImageCache<T> implements ImageCache<T> {
     @Override
     public void clear() {
         cache.clear();
+    }
+
+    public Collection<SoftReference<T>> values() {
+        return cache.values();
     }
 }

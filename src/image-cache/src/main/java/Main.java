@@ -1,7 +1,3 @@
-import java.lang.management.GarbageCollectorMXBean;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryPoolMXBean;
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -14,14 +10,16 @@ public class Main {
      * Чтобы сравнение было более достоверным, сначала выполним прогрев JVM.
      */
 
-    private static final int IMAGES_COUNT = 10_000;
+    private static final int IMAGES_COUNT = 5000;
     private static final int WARM_UP_ITERATIONS = 1000;
-    private static final int MEASUREMENT_ITERATIONS = 1000;
+    private static final int MEASUREMENT_ITERATIONS = 10_000;
     private static final int STRONG_CACHE_SIZE = 1000;
-    private static final int SOFT_CACHE_SIZE = 3000;
-    private static final int INITIAL_CAPACITY = 1000;
-    private static final float LOAD_FACTOR = 1.1f;
-    private static final float TEMPORARY_IMAGE_REFERENCE_HOLD_COUNT = 400; // регулирует, сколько мы будем держать сильных ссылок, чтобы сымитировать работу реального приложения
+    private static final int SOFT_CACHE_SIZE = 500;
+    private static final int INITIAL_CAPACITY = 11000;
+    private static final float LOAD_FACTOR = .75f;
+    private static final float TEMPORARY_IMAGE_REFERENCE_HOLD_COUNT = 50; // регулирует, сколько мы будем держать сильных ссылок, чтобы сымитировать работу реального приложения
+    private static final int IMAGES_COUNT_IN_SIMPLE_CACHE = 3000;
+    private static final int NEW_IMAGE_TO_LOAD = 500; // параметр, регулирующий, когда следует грузить новое изображение
 
     public static void main(String[] args) {
         System.out.println("======= Исходное состояние памяти ======");
@@ -37,7 +35,7 @@ public class Main {
 
     private static void warmUp() {
         // Прогреваем виртуальную машину и JIT-компилятор
-        ThreeLevelImageCache<byte[]> cache = new ThreeLevelImageCache<>(INITIAL_CAPACITY + 1, STRONG_CACHE_SIZE, SOFT_CACHE_SIZE);
+        ThreeLevelImageCache<byte[]> cache = new ThreeLevelImageCache<>(INITIAL_CAPACITY, STRONG_CACHE_SIZE, SOFT_CACHE_SIZE);
 
         // Выполняем прогрев через цикл простых операций
         for (int i = 0; i < IMAGES_COUNT; i++) {
@@ -66,7 +64,6 @@ public class Main {
             }
         };
 
-        long startTime = System.nanoTime();
 
         ThreeLevelImageCache<byte[]> threeLevelImageCache = new ThreeLevelImageCache<>(INITIAL_CAPACITY, STRONG_CACHE_SIZE, SOFT_CACHE_SIZE);
 
@@ -74,32 +71,36 @@ public class Main {
             threeLevelImageCache.put(i, (byte[]) ImageLoader.load(i));
         }
 
+        double[] durationsIterations = new double[10];
         // Повторный доступ к изображениям
         for (int iteration = 0; iteration < 10; iteration++) {
+
+            double[] durationsMeasurements = new double[MEASUREMENT_ITERATIONS];
             for (int i = 0; i < MEASUREMENT_ITERATIONS; i += 10) {
+                long startTime = System.nanoTime();
                 int index;
-                if (i % 50 == 0) {
+                if (i % NEW_IMAGE_TO_LOAD == 0) {
                     // получаем индекс изображения, которое еще не было в кеше
                     index = randomNewImageToLoadIndex();
                 } else {
                     // получаем индекс изображения, которое ранее мы добавляли сами в кеш (при этом, оттуда оно могло уже удалиться)
                     index = randomImageIndex();
                 }
-                System.gc();
                 byte[] bytes = threeLevelImageCache.get(index);
                 imageTemporaryStrongReferenceHolder.put(index, bytes);
+                long endTime = System.nanoTime();
+                double durationMs = TimeUnit.NANOSECONDS.toMillis(endTime - startTime);
+                durationsMeasurements[i] = durationMs;
             }
+            durationsIterations[iteration] = Arrays.stream(durationsMeasurements).average().orElse(0);
         }
 
-        long endTime = System.nanoTime();
-        double durationMs = TimeUnit.NANOSECONDS.toMillis(endTime - startTime);
+
         System.out.println("\n===> Трёхуровневый кэш:");
 
-        System.out.printf("Трёхуровневый кэш: %.2f мс\n", durationMs);
-        System.out.println("Размер кеша общий: " + threeLevelImageCache.size());
-        System.out.println("Размер кеша strong: " + threeLevelImageCache.strongCacheSize());
-        System.out.println("Размер кеша soft: " + threeLevelImageCache.softCacheSize());
-        System.out.println("Размер кеша weak: " + threeLevelImageCache.weakCacheSize());
+        System.out.printf("Среднее время работы операции get: %.2f мс\n", Arrays.stream(durationsIterations).average().orElse(0));
+        System.out.println("Количество непустых изображений в кеше с мягкими ссылками: " + threeLevelImageCache.softCacheNotNullValueCount());
+        System.out.println("Количество непустых изображений в кеше со слабыми ссылками: " + threeLevelImageCache.weakCacheNotNullValueCount());
 
         System.out.println("======= Состояние памяти после работы  трёхуровневый кеша ======");
         AdvancedMemoryProfiler.profileMemory();
@@ -118,22 +119,22 @@ public class Main {
         LinkedHashMap<Integer, byte[]> singleLevelCache = new LinkedHashMap<>(INITIAL_CAPACITY + 1, LOAD_FACTOR, true) {
             @Override
             protected boolean removeEldestEntry(Map.Entry<Integer, byte[]> eldest) {
-                return size() > IMAGES_COUNT / 2;
+                return size() > IMAGES_COUNT_IN_SIMPLE_CACHE;
             }
         };
-
-        long startTime = System.nanoTime();
-
 
         for (int i = 0; i < IMAGES_COUNT; i++) {
             singleLevelCache.put(i, (byte[]) ImageLoader.load(i));
         }
 
+        double[] durationsIterations = new double[10];
         // Повторный доступ к изображениям
         for (int iteration = 0; iteration < 10; iteration++) {
+            double[] durationsMeasurements = new double[MEASUREMENT_ITERATIONS];
             for (int i = 0; i < MEASUREMENT_ITERATIONS; i += 10) {
+                long startTime = System.nanoTime();
                 int index;
-                if (i % 500 == 0) {
+                if (i % NEW_IMAGE_TO_LOAD == 0) {
                     index = randomNewImageToLoadIndex();
                     Object load = ImageLoader.load(index);
                     singleLevelCache.put(index, (byte[]) load);
@@ -149,14 +150,16 @@ public class Main {
                         imageHolder.put(index, image);
                     }
                 }
-            }
 
+                long endTime = System.nanoTime();
+                double durationMs = TimeUnit.NANOSECONDS.toMillis(endTime - startTime);
+                durationsMeasurements[i] = durationMs;
+            }
+            durationsIterations[iteration] = Arrays.stream(durationsMeasurements).average().orElse(0);
         }
 
-        long endTime = System.nanoTime();
-        double durationMs = TimeUnit.NANOSECONDS.toMillis(endTime - startTime);
         System.out.println("\n===> Одноуровневый кэш:");
-        System.out.printf("Одноуровневый кэш: %.2f мс\n", durationMs);
+        System.out.printf("Среднее время работы операции get: %.2f мс\n", Arrays.stream(durationsIterations).average().orElse(0));
 
         System.out.println("======= Состояние памяти после работы обычного кеша ======");
         AdvancedMemoryProfiler.profileMemory();
@@ -170,34 +173,4 @@ public class Main {
         return new Random().nextInt(IMAGES_COUNT + 1, IMAGES_COUNT * 2);
     }
 
-}
-
-
-class AdvancedMemoryProfiler {
-
-    public static void profileMemory() {
-        DecimalFormat df = new DecimalFormat("#,###.##");
-
-        // Информация о кучах (heap)
-        List<MemoryPoolMXBean> pools = ManagementFactory.getMemoryPoolMXBeans();
-        for (MemoryPoolMXBean pool : pools) {
-            long used = pool.getUsage().getUsed();
-            long committed = pool.getUsage().getCommitted();
-            long max = pool.getUsage().getMax();
-
-            System.out.println("Тип области памяти: " + pool.getName());
-            System.out.println("  Тип памяти: " + pool.getType());
-            System.out.println("  Объем занятой памяти: " + df.format(used / (float) 1024 / 1024) + " МБ");
-            System.out.println("  Выделено памяти: " + df.format(committed / (float) 1024 / 1024) + " МБ");
-            System.out.println("  Максимальная разрешенная память: " + df.format(max / (float) 1024 / 1024) + " МБ");
-        }
-
-        // Информация о сборщике мусора
-        List<GarbageCollectorMXBean> gcBeans = ManagementFactory.getGarbageCollectorMXBeans();
-        for (GarbageCollectorMXBean bean : gcBeans) {
-            System.out.println("Сборщик мусора: " + bean.getName());
-            System.out.println("  Кол-во выполненных сборок: " + bean.getCollectionCount());
-            System.out.println("  Суммарное время работы: " + bean.getCollectionTime() + " мс");
-        }
-    }
 }

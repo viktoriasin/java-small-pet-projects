@@ -1,11 +1,12 @@
 import java.lang.ref.WeakReference;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class WeakImageCache<T> implements ImageCache<T> {
     private final HashMap<Object, WeakReference<T>> cache;
 
-    public WeakImageCache(int capacity) {
-        this.cache = new HashMap<>(capacity+ 1, 1.1f);
+    public WeakImageCache(final int capacity) {
+        this.cache = new HashMap<>(capacity, 0.75f);
     }
 
     @Override
@@ -33,8 +34,11 @@ public class WeakImageCache<T> implements ImageCache<T> {
     }
 
     @Override
-    public boolean remove(Object key) {
+    public void remove(Object key) {
         cache.remove(key);
-        return true;
+    }
+
+    public Collection<WeakReference<T>> values() {
+        return cache.values();
     }
 }

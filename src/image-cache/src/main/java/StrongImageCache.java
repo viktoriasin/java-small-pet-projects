@@ -7,7 +7,7 @@ public class StrongImageCache<T> implements ImageCache<T> {
 
     public StrongImageCache(int capacity, int maxCacheSize, SoftImageCache<T> softImageCache) {
 
-        this.cache = new LinkedHashMap<>(capacity + 1, 1.1f, true) {
+        this.cache = new LinkedHashMap<>(capacity, 0.75f, true) {
 
             @Override
             protected boolean removeEldestEntry(Map.Entry<Object, T> eldest) {
@@ -42,8 +42,7 @@ public class StrongImageCache<T> implements ImageCache<T> {
     }
 
     @Override
-    public boolean remove(Object key) {
+    public void remove(Object key) {
         cache.remove(key);
-        return true;
     }
 }

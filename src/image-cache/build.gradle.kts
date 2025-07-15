@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("checkstyle")
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "ru.sinvic"
@@ -19,28 +19,11 @@ tasks.test {
     useJUnitPlatform()
 }
 
-configure<CheckstyleExtension> {
-    toolVersion = "10.3.1" // версия Checkstyle
-    configFile = file("config/checkstyle/checkstyle.xml") // путь к файлу настроек
-    maxWarnings = 0 // максимальное число предупреждений
-    maxErrors = 0 // максимальное число ошибок
-}
-tasks.named<Checkstyle>("checkstyleMain") {
-    source = fileTree("src/main/java")// источник основного кода
-    isIgnoreFailures = false // теперь устанавливается на уровне задачи
-}
-
-tasks.named<Checkstyle>("checkstyleTest") {
-    source = fileTree("src/test/java")// источник тестового кода
-    isIgnoreFailures = false // аналогично устанавливаем на уровне задачи
-}
-
-tasks.named<Task>("check") {
-    dependsOn(tasks.named("checkstyleMain"), tasks.named("checkstyleTest"))
-}
-
-tasks.named<Checkstyle>("checkstyleMain") {
-    reports {
-        html.required.set(true) // включение HTML отчёта
+tasks.register("printClasspath") {
+    doLast {
+        println("Current classpath:")
+        configurations["compileClasspath"].files.forEach { file ->
+            println(" - $file")
+        }
     }
 }

@@ -41,7 +41,7 @@ public class ThreeLevelImageCache<T> implements ImageCache<T> {
     }
 
     @Override
-    public boolean remove(Object key) {
+    public void remove(Object key) {
         throw new UnsupportedOperationException();
     }
 
@@ -60,6 +60,14 @@ public class ThreeLevelImageCache<T> implements ImageCache<T> {
 
     public int weakCacheSize() {
         return weakImageCache.size();
+    }
+
+    public int softCacheNotNullValueCount() {
+        return (int) softImageCache.values().stream().filter(x -> x.get() != null).count();
+    }
+
+    public int weakCacheNotNullValueCount() {
+        return (int) weakImageCache.values().stream().filter(x -> x.get() != null).count();
     }
 
     @Override
